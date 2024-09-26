@@ -1,0 +1,189 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Lösningsförslag för tentamen i kombinatorik, 11 Mars 2024 $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+\date{19 Mars 2024}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+\setlength{\extrarowheight}{12pt}
+
+\begin{document}
+
+\definecolor{darkgreen}{rgb}{0.0627, 0.4588, 0.1451}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+
+Denna fil ger lösningar på uppgifterna i tentan den 15de mars 2023.
+
+\end{abstract}
+
+\section{Fråga 1}
+
+Detta är sats 24 ur föreläsning 2.
+
+\section{Fråga 2a)}
+
+Vi tänker oss att vi har en grupp av $n$ personer, och vi skall välja någon delgrupp av godtycklig storlek, som skall ha en ledare.
+
+I vänster led tänker vi oss att vi börjar med att välja storleken på gruppen, och kallar den $k$. När vi har valt storleken väljer vi specifikt vilka $k$ individer vi skall inkludera, vilket kan göras på ${n \choose k}$ sätt. Sedan väljer vi en ledare ur gruppen, vilket vi kan göra på $k$ sätt.
+
+I höger led tänker vi oss att vi börjar med att välja en ledare för gruppen, vilket kan göras på $n$ sätt, och sedan väljer vi resten av medlemmarna i gruppen. Dessa återstående medlemmar är en delmängd till mängden av återstående personer, vilka är $n-1$ stycken, och vi vet att det finns $2^{n-1}$ delmängder till en mängd med $n-1$ element. Alltså har vi $2^{n-1}$ val av resten av medlemmarna i gruppen.
+
+\section{Fråga 2b)}
+
+Vi har $n$ stycken personer som skall hålla en fest -- de flesta kan bara slappa, men $k$ stycken behöver hjälpa till. Av dessa skall två handla, tre duka, och resten diska efter festen.
+
+I vänster led väljer vi först de två personerna som skall handla, vilket vi kan göra på $n \choose 2$ sätt. Sedan har vi $n-2$ personer kvar att välja mellan för de tre som skall duka, så dem kan vi välja på $n - 2 \choose 3$ sätt. Till sist skall vi välja de $k-5$ personerna som skall diska bland de återstående $n-5$ personerna, vilket vi gör på $n - 5 \choose k - 5$ sätt.
+
+I höger led väljer vi istället först vilka $k$ personer som skall hjälpa till alls, vilket kan göras på $n \choose k$ sätt. Sedan väljer vi vilka två av dessa som skall handla, vilket göres på $k \choose 2$ sätt, och vilka tre som skall duka, vilket vi kan göra på $k - 2 \choose 3$ sätt. Resten får diska.
+
+\section{Fråga 3a)}
+
+\begin{definition}
+    Om $\{a_k\}_{k=0}^\infty$ är någon följd ges dess \emph{exponentiella genererande funktion} av
+    $$EG_a(x) = \sum_{k=0}^{\infty} a_k \frac{x^k}{k!}.$$
+\end{definition}
+ 
+\section{Fråga 3b)}
+
+Fibonaccitalen $\{f_i\}_{i=0}^\infty$ definieras rekursivt av att $f_0 = f_1 = 1$, och
+$$f_{k+2} = f_{k+1} + f_k, \quad \forall k \geq 0.$$
+
+Multiplicerar vi denna likhet med $\frac{x^k}{k!}$ på bägge sidor, och sedan summerar detta över alla $k$ för vilken likheten gäller -- det vill säga alla $k \geq 0$ -- så får vi att
+\begin{equation}\label{q3a:1}
+    \sum_{k=0}^{\infty} f_{k+2}\frac{x^k}{k!} = \sum_{k=0}^{\infty} f_{k+1}\frac{x^k}{k!} + \sum_{k=0}^{\infty} f_{k}\frac{x^k}{k!}.
+\end{equation}
+
+Vi observerar nu att
+$$\frac{x^k}{k!} = \frac{\intd}{\dx} \frac{x^{k+1}}{(k+1)!} = \frac{\intd^2}{\dx^2} \frac{x^{k+2}}{(k+2)!},$$
+så om vi använder detta i \eqref{q3a:1}, och observerar att derivatan är linjär så vi får plocka ut den ur summan, så får vi att
+$$\frac{\intd^2}{\dx^2}\left(\sum_{k=0}^{\infty} f_{k+2}\frac{x^{k+2}}{(k+2)!}\right) = \frac{\intd}{\dx}\left(\sum_{k=0}^{\infty} f_{k+1}\frac{x^{k+1}}{(k+1)!}\right) + \sum_{k=0}^{\infty} f_{k}\frac{x^k}{k!}.$$
+
+Uttrycken som står inuti derivatorna nu är ju nästan exakt den exponetiella genererande funktionen -- förutom att den med andraderivatan saknar sin konstanta och linjära term, och den med förstaderivatan saknar sin konstanta term.
+
+Men vi vet ju att derivatan oavsett skickar just dessa termer på noll -- så vi kan lägga till dem utan att ändra uttryckets värde! Alltså är vad vi har sett att
+$$EG_f''(x) = EG_f'(x) + EG_f(x),$$
+så den differentialekvation som den exponentiella genererande funktionen lyder är alltså $y'' = y' + y$.
+
+Vill vi ha randvillkor för denna differentialekvation kan vi direkt räkna ut att vi måste ha $EG_f(0) = f_0 = 1$ och $EG_f'(0) = f_1 = 1$.
+
+Att faktiskt finna en lösning till denna differentialekvation var inte en del av uppgiften, och att göra det gav inte mer poäng på tentan. För den intresserade kan vi ändock nämna att lösningen är\sidenote[][]{Jämför här Binets formel för Fibonaccitalen, som också innehållet många rötter ur fem, och det gyllene snittet.}
+$$y(x) = \frac{1}{10} e^{-\frac{1}{2} (\sqrt{5} - 1) x} \left((5 + \sqrt{5}) e^{\sqrt{5} x} + 5 - \sqrt{5}\right).$$
+
+\section{Fråga 4 a \& b}
+
+Se föreläsning 9 och 10.
+
+\section{Fråga 5 a \& b}
+
+Del a i denna fråga blev lite för vag för att kunna rättas ordentligt, så den ströks ur tentan.
+
+Oavsett, se föreläsning 4 för bägge delarna av denna uppgift.
+
+\section{Fråga 6a)}
+
+En Erd\H{o}s-Rényi-graf med parameterar $n$ och $p$ är en graf på $n$ noder, där varje möjlig kant är med med sannolikhet $p$, oberoende av varandra.
+
+Vi kan skapa en $k$-cykel genom att först välja en mängd av $k$ stycken noder, och sedan välja en cyklisk ordning\sidenote[][]{Med detta menar vi alltså ett sätt att sätta personer runt ett runt bord, där vi inte heller kan se skillnad på medurs och moturs. Så vi kan se detta som en permutation där vi betraktar $1234$ och $2341$ som samma, eftersom bordet är runt, och också betraktar $1234$ och $4321$ som samma, eftersom medurs och moturs ger samma cykel. Tänk på exemplet tidigt i kursen med att placera människor kring ett runt bord.
+
+Den här komplikationen med att olika permutationer kan ge samma cykel var inte avsedd i uppgiften, utan är något jag först insåg under rättningen och när jag skulle skriva lösningsförslagen, så inga större poängavdrag för att missa den.} av dem. Så låt, för varje mängd $A \in {[n] \choose k}$ och varje cyklisk ordning $\pi$, $C_{A,\pi}$ vara händelsen att noderna i $A$ bildar en cykel i ordning $\pi$.
+
+Om vi låter $X$ vara antalet $k$-cykler i vår graf har vi alltså att
+$$X = \sum_{A, \pi} \ind{C_{A,\pi}},$$
+så vi kan med väntevärdets linjäritet räkna ut att
+$$\E{X} = \E{\sum_{A, \pi} \ind{C_{A,\pi}}} = \sum_{A, \pi} \E{\ind{C_{A,\pi}}} = \sum_{A, \pi} \Prob{C_{A,\pi}}.$$
+
+Vi ser enkelt att sannolikheten för varje given händelse $C_{A,\pi}$ måste vara precis $p^k$, eftersom det är exakt $k$ stycken kanter som måste vara med i grafen för att de noderna skall bilda en cykel i den ordningen.
+
+Vi vet också att det finns $n \choose k$ sätt att välja $A$, och det finns $(k-1)!/2$ sätt att välja $\pi$.\sidenote[][]{Det finns $k!$ sätt att välja en permutation, men sedan finns det $2k$ stycken olika permutationer som motsvarar varje given cyklisk ordning, genom att välja en plats längs det runda bordet att börja skriva permutationen och välja att skriva medurs eller moturs.} Alltså har vi att
+$$\E{X} = \sum_{A, \pi} \Prob{C_{A,\pi}} = {n \choose k}\frac{(k-1)!}{2}p^k = \frac{n!}{2 k (n-k)!} p^k.$$
+
+\section{Fråga 6b)}
+
+{\large \textbf{Varning:}} Tyvärr var det ett fel i denna uppgiften -- påståendet ni ombeds bevisa är inte sant! För att påståendet skall bli sant måste vi låta $k$ växa med $n$ med någon viss hastighet,\sidenote[][]{Övning för den nyfikne: Hur litet kan vi välja $k(n)$ i termer av $n$ så att väntevärdet faktiskt går mot noll?} vilket jag missade när jag skapade denna uppgiften genom att modifiera en annan tidigare uppgift. Mea culpa. Nedan ger jag den ``lösning'' som hade gett maximal poäng på tentan.
+
+Markovs olikhet säger oss att $\Prob{X > 0} \leq \E{X}$, så för att visa att sannolikheten att det finns en $k$-cykel går mot noll räcker det att visa att väntevärdet vi räknade ut ovan går mot noll. Om vi stoppar in $p = \frac{c}{n}$ i den räkningen får vi att vi vill visa att
+$$\lim_{n \to \infty} \frac{n! c^k}{2 n^k k (n-k)!} = \frac{c^k}{2k}\lim_{n \to \infty} \frac{n!}{n^k (n-k)!}$$
+blir noll.
+
+Tyvärr är inte detta gränsvärde noll. Om man antingen inte noterar detta och bara inkorrekt påstår att det blir noll,\sidenote[][]{Kursen handlar ju inte om att räkna ut gränsvärden, så att göra fel på den biten ska inte kosta en några poäng.} eller noterar detta och påpekar att det är fel i uppgiften, så får man full poäng på denna uppgift.
+
+\section{Fråga 7}
+
+Vi använder vår sedvanliga metod, som vi lärt oss under föreläsningarna, och konstaterar att om vi låter $\ell^i_n$ vara antalet lösningar till ekvationen $x_i = n$ under våra begränsningar på de olika variablerna, gäller det att
+$$\ell_n = (\ell^1 * \ell^2 * \ell^3 * \ell^4)_n,$$
+så att
+$$F_\ell(x) = F_{\ell^1}(x)F_{\ell^2}(x)F_{\ell^3}(x)F_{\ell^4}(x),$$
+och vad vi behöver räkna ut är de genererande funktionerna för dessa följder.
+
+Vi börjar med följden $\ell^2 = (1,0,1,0,\ldots)$, och ser i vår formelsamling att $F_{\ell^2}(x) = \frac{1}{1 - x^2}$.
+
+För följden $\ell^1 = (0,1,0,1,\ldots)$ finns det ett stort antal möjliga trick för att härleda vad den borde vara -- det finns en metod i exemplet i föreläsningarna, så låt oss använda en annan här. Vi kan observera att $(0,1,0,1,\ldots) = (1,1,1,1,\ldots) - (1,0,1,0,1,\ldots)$, så om vi tar genererande funktioner på bägge sidor av denna likheten, och använder att vi vet att genererande funktionen för bara ettor är $\frac{1}{1-x}$ och att vi just såg att genererande funktionen för indikatorföljden av jämna tal är $\frac{1}{1 - x^2}$, så får vi att
+$$F_{\ell^1}(x) = \frac{1}{1 - x} - \frac{1}{1 - x^2}.$$
+
+För följden $\ell^3$ kan vi observera att
+$$(0,0,\underbrace{1,\ldots,1}_{7\text{ stycken}},0,\ldots) = (\underbrace{1,\ldots,1,}_{10\text{ stycken}}0,\ldots) - (1,1,0,0,\ldots)$$
+och för följder av ettor och sedan nollor vet vi ur formelsamlingen vad deras genererande funktioner är, så detta ger oss att
+$$F_{\ell^3}(x) = \frac{1 - x^{10}}{1-x} - \frac{1 - x^2}{1 - x}.$$
+
+Slutligen, för följden $\ell^4 = (4,4,4,\ldots)$ så ser vi att
+$$F_{\ell^4}(x) = \sum_{k=0}^{\infty} 4 x^k = 4 \sum_{k=0}^{\infty} x^k = \frac{4}{1 - x},$$
+där vi återigen använt att vi vet genererande funktionen för $(1,1,1,\ldots)$.
+
+Så sammantaget blir vårt svar att
+$$F_\ell(x) = \left(\frac{1}{1 - x^2}\right)\left(\frac{1}{1 - x} - \frac{1}{1 - x^2}\right)\left(\frac{1 - x^{10}}{1-x} - \frac{1 - x^2}{1 - x}\right)\left(\frac{4}{1 - x}\right).$$
+
+\section{Fråga 8}
+
+{\large \textbf{Varning:}} Även i denna övning är det ett litet fel: Vektorerna man ombeds betrakta som enhetsvektorer är så klart inte det. Vi ger ändock en lösning på denna uppgift med den avsedda metoden, för att illustrera hur en så bra lösning som möjligt hade kunnat se ut.
+
+Vi ges av ledtråden att vi skall använda probabilistiska metoden, så låt oss anta att varje $\eta_i$ tar värdena $1$ och $-1$ med lika sannolikhet oberoende av varandra, och räkna ut väntevärdet av kvadraten av normen av den givna summan.
+
+Vi använder notationen som är bekant från linjär algebra här, men samma räkningar hade så klart gått att göra utan sådan notation, de hade bara blivit lite otympligare att skriva och tänka på. Specifikt använder vi oss av att $\norm{v}^2 = \inpr{v}{v}$, och linjäritet hos väntevärdet och inre produkten.
+
+\begin{align*}
+  \E{\norm{\sum_{i=1}^{n} \eta_i v_i}^2} &= \E{\inpr{\sum_{i=1}^{n} \eta_i v_i}{\sum_{i=1}^{n} \eta_i v_i}}\\
+  &= \E{\sum_{i = 1}^{n} \sum_{j = 1}^{n} \eta_i \eta_j \inpr{v_i}{v_j}}\\
+  &= \sum_{i = 1}^{n} \sum_{j = 1}^{n} \E{\eta_i \eta_j} \inpr{v_i}{v_j}.
+\end{align*}
+
+I det här steget har vi alltså reducerat problemet med att studera normen för den här summan av plus och minus våra vektorer till att bara studera väntevärdet av produkterna av våra $\eta_i$. Nyckelinsikten här är att $\E{\eta_i \eta_j} = 0$ om $i \neq j$, och $\E{\eta_i^2} = 1$ för varje $i$. Så vi kan fortsätta räkningen ovan genom att skriva
+\begin{align*}
+  \E{\norm{\sum_{i=1}^{n} \eta_i v_i}^2} &= \sum_{i = 1}^{n} \sum_{j = 1}^{n} \E{\eta_i \eta_j} \inpr{v_i}{v_j}\\
+  &= \sum_{i=1}^{n} \inpr{v_i}{v_i} = \sum_{i=1}^{n} \norm{v_i}^2,
+\end{align*}
+så alltså måste det enligt vårt vanliga argument om att väntevärdet inte är större än varje möjligt utfall finnas ett deterministiskt val av $\eta_i$ sådant att
+$$\norm{\sum_{i=1}^{n} \eta_i v_i}^2 \leq \sum_{i=1}^{n} \norm{v_i}^2,$$
+och tar vi roten ur detta får vi att
+\begin{equation}\label{Q8:1}
+  \norm{\sum_{i=1}^{n} \eta_i v_i} \leq \sqrt{\sum_{i=1}^{n} \norm{v_i}^2}.
+\end{equation}
+
+Hade våra vektorer $v_i$ faktiskt varit enhetsvektorer, såsom vi inkorrekt påstod i formuleringen av uppgiften, hade höger led i denna olikhet varit precis $\sqrt{n}$, vilket är vad uppgiften gav oss. Nu får vi istället nöja oss med det aningen mindre vackra uttrycket i \eqref{Q8:1}.
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}

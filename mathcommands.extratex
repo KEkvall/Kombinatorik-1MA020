@@ -6,9 +6,30 @@
 \usepackage{amssymb}%
 \usepackage{amsthm}
 
+\usepackage{dsfont}
 \usepackage[shortlabels]{enumitem}
 
 \usepackage[swedish]{babel}
+
+\usepackage{tabularx}
+
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;} 
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\usepackage{soulutf8}
+
+\makeatletter
+\newcommand{\ostar}{\mathbin{\mathpalette\make@circled\star}}
+\newcommand{\make@circled}[2]{%
+  \ooalign{$\m@th#1\smallbigcirc{#1}$\cr\hidewidth$\m@th#1#2$\hidewidth\cr}%
+}
+\newcommand{\smallbigcirc}[1]{%
+  \vcenter{\hbox{\scalebox{0.77778}{$\m@th#1\bigcirc$}}}%
+}
+\makeatother
 
 \newtheorem{theorem}{Teorem}%[subsection]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -16,6 +37,7 @@
 \newtheorem{cor}[theorem]{Korollarium}
 \newtheorem{conjecture}[theorem]{Hypotes}
 \newtheorem{claim}[theorem]{Påstående}
+\newtheorem{axiom}[theorem]{Axiom}
 
 \theoremstyle{definition}
 \newtheorem{definition}[theorem]{Definition}
@@ -57,7 +79,9 @@
 \newcommand{\ProbP}{\mathbb{P}}
 \newcommand{\Cov}[2]{\operatorname{Cov}\left(#1,#2\right)}
 \newcommand{\ind}[1]{\mathds{1}_{\left\{#1\right\}}}
+\newcommand{\indSet}[1]{\mathds{1}_{#1}}
 \newcommand{\given}{\ \middle|\ }
+\newcommand{\uniformIn}{\mathrel{\stackrel{\makebox[0pt]{\mbox{\normalfont\tiny u}}}{\in}}}
 
 \newcommand{\e}{\mathfrak{e}}
 \newcommand{\Pset}{\mathcal{P}}
@@ -110,3 +134,11 @@
 
 % Mängddifferens
 \newcommand{\symdiff}{\mathbin{\triangle}}
+
+% Stirlingtal
+\DeclareRobustCommand{\stirlingPart}{\genfrac\{\}{0pt}{}}
+\DeclareRobustCommand{\stirlingCycle}{\genfrac{[}{]}{0pt}{}}
+
+% Specialcell i tabell:
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}

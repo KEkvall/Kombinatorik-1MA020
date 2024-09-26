@@ -1,0 +1,292 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Föreläsning 3: Inklusion-exklusion, derangemang, surjektioner, och mängdpartitioner $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+\date{23 januari 2023}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+
+\begin{document}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+Vi introducerar inklusion-exklusion, och använder det för att räkna lösningar på ekvationer och antalet permutationer som är derangemang. Vi fortsätter med att räkna antalet surjektioner med hjälp av inklusion-exklusion. Sedan använder vi det resultatet om surjektioner för att räkna antalet mängdpartitioner.
+\end{abstract}
+
+\section{Inklusion-exklusion}
+
+I matematiska institutionens fikarum för de anställda brukar det finnas äpplen, klementiner, och bananer i fruktlådorna. Om någon säger dig att det för tillfället finns femton runda frukter och tio frukter som inte går att odla i Sverige i lådorna, kan du räkna ut hur många frukter det finns?
+
+Det kan du förstås inte -- problemet är att en klementin tillhör båda kategorierna, så om det finns tio klementiner finns det totalt femton frukter (tio klementiner och fem äpplen), men om det finns noll klementiner finns det totalt tjugofem frukter (femton äpplen och tio bananer). Utan informationen om hur många klementiner det finns kan svaret på frågan variera.
+
+Om vi låter $A$ vara mängden av runda frukter och $B$ vara mängden av frukter som inte kan odlas i Sverige är vad vi har observerat att\sidenote[][]{Jämför detta med additionsprincipen, som i en formulering säger att $\abs{A \coprod B} = \abs{A} + \abs{B}$. När vi introducerade den var vi noggranna med skillnaden mellan $\coprod$ och $\cup$, och sade att vi skulle återkomma till vad som händer om $A$ och $B$ kan dela element.
+
+Detta är vår återkomst.}
+$$\abs{A \cup B} = \abs{A} + \abs{B} - \abs{A \cap B}.$$
+
+En dag kommer en administratör på idén att citroner faktiskt också är en frukt, och berättar för dig att idag finns det tio runda frukter, elva som inte kan odlas i Sverige, och sju \emph{gula frukter}. Du blir förvirrad och går hem och ritar ett Venndiagram över frukter.\sidenote[][]{Nästa morgon får du reda på att det nu dessutom finns gula äpplen, päron, stjärnfrukt, och Xoconostler. Du skriver en arg insändare i UNT om vad universitetet egentligen lägger sin budget på.}
+
+Formeln du kommer på efter att ha studerat ditt Venndiagram är att
+\begin{align*}
+  \abs{A \cup B \cup C} &= \abs{A} + \abs{B} + \abs{C}\\
+  &\qquad - \abs{A \cap B} - \abs{A \cap C} - \abs{B \cap C}\\
+  &\qquad + \abs{A \cap B \cap C}.
+\end{align*}
+
+Innan den fruktgalna administratören hinner lägga till ännu en absurd kategori av frukt undsätter dig din kombinatoriklärare med följande sats:
+\begin{theorem}[Inklusion-exklusion]\label{theorem_inclusion_exclusion}
+  För varje samling av mängder $A_1, \ldots, A_n$ gäller det att
+  \begin{align*}
+    \abs{\bigcup_{i=1}^n A_i} &= \sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} (-1)^{\abs{I}+1}\abs{\bigcap_{i \in I} A_i}\\
+    &=\sum_{k=1}^{n} (-1)^{k-1}\left(\sum_{\substack{I \subseteq [n]\\\abs{I} = k}} \abs{\bigcap_{i \in I} A_i}\right),
+  \end{align*}
+  eller, uttryckt mindre kompakt, att
+  \begin{align*}
+    \abs{\bigcup_{i=1}^n A_i} = \sum_{i=1}^n &\abs{A_i}\\
+    & - \sum_{\{i,j\} \in [n]} \abs{A_i \cap A_j}\\
+    & + \sum_{ \{i, j, k\} \in [n] } \abs{A_i \cap A_j \cap A_k}\\
+    & - \ldots\\
+    & + (-1)^{n-1}\abs{A_1\cap A_2\cap\ldots\cap A_n}.
+  \end{align*}
+\end{theorem}
+
+Innan vi bevisar detta behöver vi definiera ett väldigt nyttigt verktyg som vi kommer använda i beviset.
+
+\begin{definition}
+  Antag att vi har två mängder $A$ och $X$, med $A \subseteq X$. Vi definierar \emph{indikatorfunktionen} $\indSet{A}: X \to \{0,1\}$ \emph{för mängden $A$} som
+  $$\indSet{A}(x) = \begin{cases}
+    1  & x \in A \\
+    0 & x \not\in A.
+  \end{cases}$$
+
+  Den är alltså ett om och endast om dess argument ligger i $A$. Vi kan observera några grundläggande egenskaper hos dessa funktioner:
+  \begin{itemize}
+    \item $\indSet{A}(x)\indSet{B}(x) = \indSet{A\cap B}(x)$
+    \item $1 - \indSet{A}(x) = \indSet{X \setminus A}(x)$
+    \item $\abs{A} = \sum_{x \in X} \indSet{A}(x)$
+    \item $(\indSet{A}(x))^n = \indSet{A}(x)$ för alla $n \neq 0$.
+  \end{itemize}
+\end{definition}
+
+Med denna definition gjord kan vi nu resonera algebraiskt om mängder och deras kardinalitet, och kan alltså ge ett algebraiskt bevis av inklusion-exklusion-principen.
+
+\begin{proof}[Algebraiskt bevis av Teorem \ref{theorem_inclusion_exclusion}]
+  Låt $X = \cup_{i=1}^n A_i$. Vi ser att
+  $$\abs{\bigcup_{i=1}^n A_i} = \sum_{x \in X} \indSet{X}(x)$$
+  så vi kan fokusera på varje punkt i taget, och visa att den räknas rätt antal gånger.
+
+  Studera nu uttrycket
+  $$(\indSet{X}(x) - \indSet{A_1}(x))(\indSet{X}(x) - \indSet{A_2}(x))\ldots(\indSet{X}(x) - \indSet{A_n}(x))$$
+  och observera att det måste vara identiskt noll. För varje element $x\in X$ ligger ju i något $A_i$, så produkten innehåller en term $\indSet{X}(x) - \indSet{A_i}(x) = 1 - 1 = 0$.
+
+  Vad får vi om vi multiplicerar ut detta uttrycket? Jo, vi får en term per mängd $I \subseteq [n]$, där vi valt sidan $\indSet{X}(x)$ för $i\not\in I$ och valt sidan $-\indSet{A_i}(x)$ för $i \in I$.\sidenote[][]{Jämför med hur vi resonerade om att multiplicera ut en produkt när vi bevisade binomialsatsen.} Vi vet att uttrycket är noll, så vad vi får är likheten
+  $$\sum_{I \subseteq [n]} \left(\indSet{X}(x)\right)^{n - \abs{I}}\prod_{i\in I}\left(-\indSet{A_i}(x)\right) = 0.$$
+
+  Om vi nu flyttar över termen i denna summa där $I = \emptyset$ på andra sidan likhetstecknet, och bryter ut minustecknen ur produkten, blir detta
+  $$\sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} \left(\indSet{X}(x)\right)^{n - \abs{I}} (-1)^{\abs{I}+1} \prod_{i\in I}\indSet{A_i}(x) = \left(\indSet{X}(x)\right)^n.$$
+
+  I höger led kan vi omedelbart använda en av våra räkneregler för att se att det är $\indSet{X}(x)$, vilket är vad vi ville ha, så det återstår att förenkla vänster led.
+
+  Vi börjar med att använda oss utav att $\indSet{A}(x)\indSet{B}(x) = \indSet{A\cap B}(x)$ för att bli av med produkten, så att vi får
+  $$\sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} \left(\indSet{X}(x)\right)^{n - \abs{I}} (-1)^{\abs{I}+1} \indSet{\bigcap_{i\in I} A_i}(x) = \indSet{X}(x).$$
+
+  Vi hävdar nu att vi helt kan stryka termen $\left(\indSet{X}(x)\right)^{n - \abs{I}}$ ur uttrycket. Om $I = [n]$ är denna term helt enkelt $\left(\indSet{X}(x)\right)^0 = 1$, så vi kan trivialt stryka den. Om $I \neq [n]$ kan vi först använda vår räkneregel om exponenter av indikatorfunktioner och få att $\left(\indSet{X}(x)\right)^{n - \abs{I}} = \indSet{X}(x)$, och sedan observera att $X \cap \bigcap_{i\in I} A_i = \bigcap_{i\in I} A_i$, eftersom $\bigcap_{i\in I} A_i \subseteq X$. Alltså ger vår räkneregel om produkter av indikatorfunktioner att vi kan stryka faktorn $\indSet{X}(x)$.
+
+  Vad vi har sett nu är alltså att
+  $$\sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} (-1)^{\abs{I}+1} \indSet{\bigcap_{i\in I} A_i}(x) = \indSet{X}(x),$$
+  så tar vi summan av denna likheten över alla $x \in X$ och flyttar in den så långt vi kan så ser vi att
+  $$\sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} (-1)^{\abs{I}+1} \sum_{x\in X}\indSet{\bigcap_{i\in I} A_i}(x) = \sum{x \in X}\indSet{X}(x),$$
+  vilket om vi tillämpar vår regel om summor av indikatorfunktioner till slut ger oss ett uttryck med storlekar på mängder, nämligen
+  $$\sum_{\substack{I \subseteq [n]\\I\neq\emptyset}} (-1)^{\abs{I}+1} \abs{\bigcap_{i\in I} A_i} = \abs{X} = \abs{\bigcup_{i \in I} A_i},$$
+  vilket ju är precis det första uttrycket i satsen. Att detta är lika med det andra uttrycket följer av att gruppera summan efter storleken på $I$.
+\end{proof}
+
+\begin{example}
+  Hur många heltalslösningar finns det till $x_1 + x_2 + x_3 = 20$, där $0 \leq x_1 \leq 8$, $0 \leq x_2 \leq 10$, och $0 \leq x_3 \leq 12$?
+
+  Låt
+  $$X = \left\{(x_1, x_2, x_3) \in \Z_{\geq 0}^3 \given x_1 + x_2 + x_3 = 20\right\}$$
+  och låt
+  $$A_1 = \left\{(x_1, x_2, x_3) \in \Z_{\geq 0}^3 \given x_1 + x_2 + x_3 = 20, x_1 > 8\right\},$$
+  $$A_2 = \left\{(x_1, x_2, x_3) \in \Z_{\geq 0}^3 \given x_1 + x_2 + x_3 = 20, x_2 > 10\right\},$$
+  $$A_3 = \left\{(x_1, x_2, x_3) \in \Z_{\geq 0}^3 \given x_1 + x_2 + x_3 = 20, x_3 > 12\right\}$$
+  vara mängder av \emph{dåliga} lösningar, som inte uppfyller våra krav.
+
+  Vad vi vill göra är alltså att räkna ut $\abs{\left(A_1 \cup A_2 \cup A_3\right)^c} = \abs{X} - \abs{A_1 \cup A_2 \cup A_3}$. 
+  Inklusion-exklusion säger oss att
+  \begin{align*}
+    \abs{A_1 \cup A_2 \cup A_3} = \abs{A_1}& + \abs{A_2} + \abs{A_3}\\
+    &- \abs{A_1 \cap A_2} - \abs{A_1 \cap A_3} - \abs{A_2 \cap A_3}\\
+    &+ \abs{A_1 \cap A_2 \cap A_3}
+  \end{align*}
+  så vad vi behöver göra är att räkna ut $\abs{X}$ och storleken på dessa snitten.
+
+  Vi såg redan i förra föreläsningen, i biten om omordningar, hur man räknar ut $\abs{X}$ -- det ges av $\binom{20+3-1}{3-1}$. För att räkna ut $A_1$ tänker vi att vi börjar med att ge nio mynt till $x_1$, och fördelar de återstående elva mynten godtyckligt. Vår formel ger oss att detta kan göras på $\binom{11+3-1}{3-1}$ sätt. Så, om vi tillämpar detta på alla tre mängderna ser vi att
+  $$\abs{A_1} = \binom{11+3-1}{3-1}, \quad\abs{A_2} = \binom{9+3-1}{3-1}, \quad\abs{A_3} = \binom{7+3-1}{3-1}.$$
+
+  De större snitten är enklare att räkna ut -- för $A_1\cap A_2$ måste vi dela ut nio mynt till $x_1$, och sedan elva mynt till $x_2$, så vi har inga mynt kvar att dela ut fritt, och $\abs{A_1 \cap A_2} = 1$. För de två andra snitten ser vi att $9 + 13 > 20$ och $11 + 13 > 20$, så de snitten måste vara tomma. Likaledes måste snittet av alla tre mängderna vara tomt.\sidenote[][]{Detta följer så klart också redan av observationen att $A_1 \cap A_3 = \emptyset$ -- att snitta med en till mängd kan ju inte lägga till fler element.}
+
+  Sätter vi tillbaka dessa talen i inklusion-exklusion-formeln ser vi att vi fått att
+  \begin{align*}
+    \abs{\left(A_1 \cup A_2 \cup A_3\right)^c} &= \abs{X} - \abs{A_1 \cup A_2 \cup A_3}\\
+    &= \binom{20 + 3 - 1}{3 - 1} - \Bigg(\binom{11+3-1}{3-1}+ \binom{9+3-1}{3-1}\\
+    &\qquad\qquad + \binom{7+3-1}{3-1}- 1\Bigg)\\
+    &= 63.
+  \end{align*}
+\end{example}
+
+\subsection{Derangemang}
+
+\begin{definition}
+  Ett \emph{derangemang}\sidenote[][]{På engelska \emph{derangement}.} av längd $n$ är en permutation $\sigma$ av längd $n$ ur alfabetet $[n]$, sådan att $\sigma(k) \neq k$ för alla $k$.
+\end{definition}
+
+\begin{theorem}
+  Det finns
+  $$n!\sum_{i=0}^{n} \frac{(-1)^i}{i!}$$
+  derangemang av längd $n$.\sidenote[][]{Ni kanske känner igen summan här som en partialsumma av Taylorexpansionen av $e^x$ då $x = -1$ -- så antalet derangemang är mycket nära $\frac{n!}{e}$ för stora $n$.}
+
+  \begin{proof}
+    Låt $S_n$ vara mängden av alla permutationer av $[n]$ av längd $n$, och för varje $i$,
+    $$A_i = \left\{\sigma \in S_n \given \sigma(i) = i\right\}$$
+    så att vi vill räkna antalet element i $S_n \setminus \bigcup_{i=1}^n A_i$.
+
+    Att $\abs{S_n} = n!$ lärde vi oss redan första föreläsningen, och inklusion-exklusion ger oss att
+    $$\abs{\bigcup_{i=1}^n A_i} = \sum_{k=1}^{n} (-1)^{k-1}\left(\sum_{\substack{I \subseteq [n]\\\abs{I} = k}} \abs{\bigcap_{i \in I} A_i}\right).$$
+
+    Så vad vi behöver göra är att lista ut vad $\abs{\bigcap_{i \in I} A_i}$ är för varje givet $I \subseteq [n]$. Detta snittet blir precis mängden av permutationer sådana att $\sigma(i) = i$ för varje $i\in I$. Så för att skapa en sådan måste vi först sätta $\sigma(i) = i$ för dem, och sedan kan vi välja en ordning fritt för de återstående $n-k$ platserna. Detta kan vi alltså göra på $(n-k)!$ sätt.
+
+    För varje $k$ finns det $\binom{n}{k}$ stycken mängder $I$, så sammantaget måste vi ha att 
+    \begin{align*}
+      \sum_{k=1}^{n} (-1)^{k-1}\left(\sum_{\substack{I \subseteq [n]\\\abs{I} = k}} \abs{\bigcap_{i \in I} A_i}\right) &= \sum_{k=1}^{n} (-1)^{k-1}\binom{n}{k} (n-k)!\\
+      &= \sum_{k=1}^{n} (-1)^{k-1}\frac{n!}{k!(n-k)!}(n-k)!\\
+      &= \sum_{k=1}^{n} (-1)^{k-1}\frac{n!}{k!}
+    \end{align*}
+    så att
+    \begin{align*}
+      \abs{S_n \setminus \bigcup_{i=1}^n A_i} &= \abs{S_n} - \abs{\bigcup_{i=1}^n A_i}\\
+      &= n! - \sum_{k=1}^{n} (-1)^{k-1}\frac{n!}{k!} = n!\sum_{i=0}^{n} \frac{(-1)^i}{i!}
+    \end{align*}
+    såsom vi önskade visa.
+  \end{proof}
+\end{theorem}
+
+\section{Surjektioner}
+
+\begin{definition}
+  Låt $A$ och $B$ vara två mängder, och $f: A \to B$ en funktion. Vi definierar \emph{bilden} av $A$ som
+  $$f(A) = \left\{b \in B \given \exists a\in A: f(a) = b\right\},$$
+  det vill säga alla element i $B$ som träffas av något element i $A$ under $f$.
+
+  Funktionen $f$ är en \emph{surjektion} om $f(A) = B$. Om det finns en surjektion från $A$ till $B$ gäller det att $\abs{A} \geq \abs{B}$.\sidenote[][]{Detta är uppenbart för ändliga mängder $A$ och $B$ -- för oändliga mängder är detta definitionen av ordningen mellan kardinaltal.}
+\end{definition}
+
+\begin{definition}
+  För $n \geq m \geq 1$ ges \emph{Stirlings partitionstal}, också kallat \emph{Stirlingtalet av andra sorten}, av
+  $$\stirlingPart{n}{m} = \frac{1}{m!}\sum_{k=0}^{m}(-1)^k\binom{m}{k}(m-k)^n.$$
+\end{definition}
+
+\begin{theorem}\label{theorem_count_surjections}
+  Låt $A$ och $B$ vara ändliga icketomma mängder med $\abs{A} = n$, $\abs{B} = m$, och $n \geq m$. Antalet surjektioner från $A$ till $B$ ges av
+  $$S(n,m) = m!\stirlingPart{n}{m} = \sum_{k=0}^{m} (-1)^k \binom{m}{k}(m-k)^n.$$
+
+  \begin{proof}
+    Låt $X$ vara mängden av alla funktioner från $A$ till $B$, och för varje $b \in B$, låt $X_b$ vara mängden av funktioner från $A$ till $B$ som inte träffar $b$. Vi vill, som vanligt, räkna ut $\abs{X \setminus \bigcup_{b\in B} X_b} = \abs{X} - \abs{\bigcup_{b\in B} X_b}$.
+
+    Multiplikationsprincipen ger oss enkelt att $\abs{X} = m^n$ -- varje element i $A$ har $m$ val för var det skall skickas, och vi har $n$ stycken element att göra det valet för.
+
+    Inklusion-exklusion ger oss att
+    $$\abs{\bigcup_{b\in B} X_b} = \sum_{I \subseteq B} (-1)^{\abs{I} + 1}\abs{\bigcap_{b \in I} X_b}$$
+    och vad vi behöver räkna är antalet funktioner från $A$ till $B$ som undviker att träffa en viss mängd $I$. Ett specialfall ser vi omedelbart -- om $I = B$ måste snittet vara tomt, eftersom elementen i $A$ måste skickas \emph{någonstans}.
+
+    Att räkna dem är relativt enkelt -- en funktion från $A$ till $B$ som inte träffar en viss mängd $I \subset B$ är ju precis en funktion från $A$ till $B \setminus I$, och vi vet att det finns $\abs{B \setminus I}^{\abs{A}} = (m - \abs{I})^n$ sådana. Så vad vi får är att
+    $$\abs{\bigcup_{b\in B} X_b} = \sum_{I \subset B, I \neq B} (-1)^{\abs{I} + 1}(m - \abs{I})^n,$$
+    där summan är över delmängder \emph{inte lika med $B$} eftersom vi redan observerat att då $I = B$ blir det hela noll.
+
+    Så om vi grupperar den här summan efter storleken på $I$ vet vi att det finns $\binom{m}{k}$ stycken val av $I$ av storlek $k$ (och nu vet vi att $I \neq B$, så storlek $m$ är utesluten och summan går bara upp till $m-1$), så 
+    $$\abs{\bigcup_{b\in B} X_b} = \sum_{k=0}^{m-1} (-1)^{k + 1}\binom{m}{k}(m - k)^n$$
+    vilket ger oss resultatet, när vi stoppar in detta i $S(n,m) = \abs{X} - \abs{\bigcup_{b\in B} X_b}$.
+  \end{proof}
+\end{theorem}
+
+\begin{example}
+  Antag att en farmor stickat fem filtar åt sina tre barnbarn. På hur många sätt kan hon fördela filtarna, så att varje barn får åtminstone en filt? Eftersom de är handstickade är så klart filtarna \emph{särskiljbara},\sidenote[][]{Och farmor är inte så blind att hon inte kan särskilja sina barnbarn.} så det här är inte ett exempel på de kompositioner vi såg i föreläsning två, utan ett exempel på surjektioner.
+
+  Vår sats säger oss att svaret är $3!\stirlingPart{5}{3} = 150$.
+\end{example}
+
+\section{Mängdpartitioner}
+
+Hur många sätt finns det att fördela $n$ objekt i $k$ stycken olika högar? Här har vi en ny variant på räkneproblem -- istället för att vi har objekt som är särskiljbara eller inte så har vi nu osärskiljbara \emph{lådor}.
+
+\begin{theorem}
+  Antag att vi har en mängd $X$ med $\abs{X} = n$. Ett sätt att dela upp denna mängd i $k$ osärskiljbara högar\sidenote[][]{Alltså, för den som vill vara formell, ett sätt att skriva $X = A_1 \cup A_2 \cup \ldots \cup A_k$ där $A_i \cap A_j = \emptyset$ för $i \neq j$, där etiketterna på våra $A_i$ inte spelar roll. Eller så kan man se det som en ekvivalensrelation på $X$ med $k$ delar.} kallas för en \emph{mängdpartition} av $X$ i $k$ delar.
+
+  Antalet sådana ges av
+  $$\stirlingPart{n}{k}.$$
+
+  \begin{proof}
+    Vi bevisar detta genom att räkna antalet surjektioner från $X$ till $[k]$ på två olika sätt.
+
+    Beteckna antalet mängdpartitioner av $X$ i $k$ delar med $m$. Vi kan skapa oss en surjektion från $X$ till $[k]$ genom att först dela upp $X$ i $k$ delar, och sedan ge etiketter från $1$ till $k$ till delarna. Vår surjektion blir då att vi skickar del $i$ till talet $i \in [k]$. Eftersom det finns $k!$ sätt att tilldela etiketterna (etiketteringen är en permutation av längd $k$ från $[k]$) säger oss Multiplikationsprincipen att det måste finnas $k!m$ surjektioner från $X$ till $[k]$.
+
+    Men vi vet också av Teorem \ref{theorem_count_surjections} att antalet surjektioner ges av $k!\stirlingPart{n}{k}$. Alltså måste $m = \stirlingPart{n}{k}$, som önskat.
+  \end{proof}
+\end{theorem}
+
+\section{Övningar}
+
+\begin{xca}
+  Ge ett induktionsbevis av Teorem \ref{theorem_inclusion_exclusion}, teoremet där vi bevisar inklusion-exklusion-principen.
+\end{xca}
+
+\begin{xca}
+  Beteckna antalet derangemang av $n$ med $d_n$. Ge ett kombinatoriskt bevis\sidenote[][]{Ledtråd: För ett givet derangemang $\sigma$ av längd $n$, låt $k$ vara det tal som skickas till $1$. Det finns två fall: Antingen är $\sigma(1) = k$ eller inte. Hur många derangemang finns det i varje fall?} för att
+  $$d_n = (n-1)(d_{n-1} + d_{n-2}).$$
+\end{xca}
+
+\begin{xca}
+  Hur många heltalslösningar har ekvationen $x_1 + x_2 + x_3 + x_4 = 29$ om vi kräver $0 \leq x_i \leq 9$ för alla $i$?
+\end{xca}
+
+\begin{xca}
+  Antag att den fruktgalna administratören i vårt exempel till slut introducerat tio olika kategorier av frukt. Hur många termer kommer formeln för inklusion-exklusion ha när $n = 10$?
+\end{xca}
+
+\begin{xca}
+  Ge ett kombinatoriskt bevis för följande rekursion för Stirlings partitionstal
+  $$\stirlingPart{n}{k} = k\stirlingPart{n-1}{k} + \stirlingPart{n-1}{k-1}.$$
+\end{xca}
+
+\begin{xca}
+  Ge kombinatoriska bevis för att
+  $$\stirlingPart{n}{n-1} = \binom{n}{2}$$
+  och
+  $$\stirlingPart{n}{2} = 2^{n-1} - 1.$$
+\end{xca}
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}

@@ -1,0 +1,126 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Extramaterial: Formler och räkneregler $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+%\date{15 januari 2023}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+
+\setlength{\extrarowheight}{8pt}
+
+\begin{document}
+
+\definecolor{darkgreen}{rgb}{0.0627, 0.4588, 0.1451}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+I detta dokument ligger en samling av viktiga resultat och räkneregler, sammanfattade utan bevis.
+\end{abstract}
+
+
+\section{Den tolvfaldiga vägen}
+
+\begin{fullwidth}
+  \begin{tabularx}{\linewidth}{l|ccc}
+    & Generellt $f$ & Injektivt $f$ & Surjektivt $f$\\
+    \midrule
+    Bägge särskiljbara & \specialcell{Ord ur $X$ av längd $n$\\ $x^n$} & \specialcell{Permutation ur $X$ av längd $n$\\ $\frac{x!}{(x-n)!}$} & \specialcell{Surjektion från $N$ till $X$\\$x!\stirlingPart{n}{x}$} \\
+    Osärskiljbara objekt & \specialcell{Multi-delmängd av $X$\\ av storlek $n$\\$\binom{n + x - 1}{n}$} & \specialcell{Delmängd av $X$ av storlek $n$\\$\binom{x}{n}$} & \specialcell{Kompositioner av $n$\\av längd $x$\\$\binom{n - 1}{n - x}$} \\
+    Osärskiljbara lådor & \specialcell{Mängdpartition av $N$\\ i $\leq x$ delar \\$\sum_{k=1}^{x} \stirlingPart{n}{k}$} & \specialcell{Mängdpartition av $N$\\ i $\leq x$ delar av storlek $1$\\$1$ om $n \leq x$, $0$ annars} & \specialcell{Mängdpartition av $N$\\i $x$ delar\\$\stirlingPart{n}{x}$} \\
+    Bägge osärskiljbara & \specialcell{Heltalspartition av $n$ i $\leq x$ delar\\$p_x(n + x)$} & \specialcell{Sätt att skriva $n$ som\\summan av $\leq x$ ettor\\$1$ om $n \leq x$, $0$ annars} & \specialcell{Heltalspartitioner av $n$\\ i $x$ delar \\$p_x(n)$} 
+  \end{tabularx}
+\end{fullwidth}
+
+\section{Räkneregler för genererande funktioner}
+
+\begin{lemma}[Räkneregler för genererande funktioner]
+  Antag att vi har en följd $\{a_k\}_{k=0}^\infty$, med genererande funktion $F_a$. Då gäller det att
+    \begin{enumerate}
+        \item För varje $j \geq 1$ är
+        $$\sum_{k = j}^{\infty} a_k x^k = \left(\sum_{k=0}^{\infty}a_k x^k\right) - \left(\sum_{k=0}^{k=j-1} a_kx^k\right) = F_a(x) - \sum_{k=0}^{k=j-1} a_kx^k$$
+        \item För alla $m \geq 0$, $l \geq -m$ gäller det att
+        $$\sum_{k=m}^{\infty} a_k x^{k + l} = x^l\left(\sum_{k=m}^{\infty} a_k x^{k}\right) = x^l\left(F_a(x) - \sum_{k=0}^{m-1} a_k x^k\right)$$
+        \item Det gäller att\sidenote[][]{Denna räkneregel kan förstås generealiseras till att högre potenser av $k$ motsvarar högre derivator -- och om vi istället delar med någon potens av $k$ får vi primitiva funktioner till den genererande funktionen.}
+        $$\sum_{k=0}^{\infty} k a_k x^k = \frac{F_a'(x)}{x}.$$
+    \end{enumerate}
+\end{lemma}
+
+\section{Vanliga genererande funktioner}
+
+\begin{tabularx}{\linewidth}{cc}
+  Följd & Genererande funktion\\
+  \midrule
+  $(1, 0, 0, \ldots)$ & $1$\\
+  $(1,1,1,\ldots)$ & $\frac{1}{1-x}$\\
+  $a_k = 1$ om $k \leq n$, $0$ annars & $\frac{1 - x^{n+1}}{1 - x}$\\
+  Fixt $n$, $a_k = \binom{n}{k}$ & $(1+x)^n$\\
+  Fixt $n$, $a_k = \binom{n+k-1}{k}$ & $\frac{1}{(1-x)^n}$\\
+  \specialcell{Fibonaccitalen\\$f_0 = f_1 = 1$, $f_{k+1} = f_k + f_{k-1}$ för $k \geq 1$} & $\frac{1}{1 - x - x^2}$\\
+  \specialcell{Indikatorfunktion för jämna talen\\$(1,0,1,0,1,0,\ldots)$} & $\frac{1}{1-x^2}$\\
+  Catalantalen & $\frac{1 - \sqrt{1 - 4x}}{2x}$
+\end{tabularx}
+
+\begin{tabularx}{0.9\linewidth}{cc}
+  Följd & Exponentiell genererande funktion\\
+  \midrule
+  $(1, 0, 0, \ldots)$ & $1$\\
+  $(1, 1, 1, \ldots)$ & $e^x$\\
+  $(0!, 1!, 2!, 3!, \ldots)$ & $\frac{1}{1-x}$\\
+  Fixt $n$, $a_k = \frac{n!}{(n-k)!}$ & $(1 + x)^n$
+\end{tabularx}
+
+\section{Sannolikhetsteori}
+
+\begin{lemma}
+  Det gäller för alla händelser $A$ och $B$ att
+  \begin{itemize}
+      \item per definition är $\Prob{A} = \sum_{\omega \in A} \mu(\omega)$,
+      \item så $\Prob{A^c} = 1 - \Prob{A}$,
+      \item och om $A$ och $B$ har tomt snitt, $A\cap B = \emptyset$, så är $\Prob{A \cup B} = \Prob{A} + \Prob{B}$,
+      \item och om de inte nödvändigtvis har tomt snitt har vi att
+      $$\Prob{A \cup B} = \Prob{A} + \Prob{B} - \Prob{A \cap B}.$$
+      \item $\Prob{A \cap B} = \Prob{A \given B}\Prob{B}$,
+      \item och per definition är $A$ och $B$ oberoende precis när $\Prob{A \cap B} = \Prob{A}\Prob{B}$.
+  \end{itemize}
+\end{lemma}
+
+\begin{lemma}
+  Om $(\Omega, \mu)$ är något sannolikhetsrum, $A \subseteq \Omega$ någon händelse, och $X, Y: \Omega \to \R$ samt $Z: \Omega \to V$ är slumpvariabler som tar värden i $\R$ och i någon godtycklig mängd $V$, så gäller att:
+  \begin{enumerate}
+      \item $$\E{X} = \sum_{x \in X(\Omega)} x \Prob{X = x} = \sum_{\omega \in \Omega} X(\omega)\mu(\omega).$$
+      \item För alla $a, b \in \R$ så är
+      $$\E{aX + bY} = a\E{X} + b\E{Y}.$$
+      Väntevärdet är alltså en linjär funktional.
+      \item $$\Prob{A} = \E{\indSet{A}}.$$
+      \item Om $X(\omega) \leq C$ för varje $\omega$, eller ekvivalent om $\Prob{X \leq C} = 1$, så är $\E{X} \leq C$.
+      \item Om $\E{X} = C$ så finns det åtminstone ett $\omega$ sådant att $X(\omega) \geq C$.
+      \item Om $Z$ är likformigt fördelad på $V$ så gäller det för varje delmängd $W \subseteq V$ att
+      $$\Prob{Z \in W} = \frac{\abs{W}}{\abs{V}}.$$
+  \end{enumerate}
+\end{lemma}
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}

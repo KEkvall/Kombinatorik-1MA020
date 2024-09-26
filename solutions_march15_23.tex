@@ -1,0 +1,170 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Lösningsförslag för tentamen i kombinatorik, 15 Mars 2023 $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+\date{15 mars 2023}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+\setlength{\extrarowheight}{12pt}
+
+\begin{document}
+
+\definecolor{darkgreen}{rgb}{0.0627, 0.4588, 0.1451}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+
+Denna fil ger lösningar på uppgifterna i tentan den 15de mars 2023.
+
+\end{abstract}
+
+\section{Lösningsförslag till tentan}
+
+\section{Fråga 1, del a}
+
+Vi vill se varför denna formel för $f_{n,k}$ räknar etiketterade skogar med $n$ noder på $k$ träd. Vill vi skapa oss en sådan skog så börjar vi med att bestämma hur många noder varje träd skall innehålla -- vi säger att träd ett har $n_1$ noder, träd två har $n_2$ noder, och så vidare.
+
+Sedan fördelar vi ut de $n$ etiketterna i dessa $k$ olika högar, så att varje hög får rätt antal etiketter -- detta kan göras på $\binom{n}{n_1, n_2, \ldots, n_k}$ sätt.
+
+Sedan väljer vi, för varje hög av etiketter, vilket träd med dessa etiketter vi vill ha. Cayleys formel ger oss att detta kan, för varje träd, göras på $n_i^{n_i-2}$ sätt, så multiplikationsprincipen ger oss att vi kan välja vår skog på $n_1^{n_1-2}n_2^{n_2-2}\ldots n_k^{n_k-2}$ sätt.
+
+Hittills är formeln vi har sett
+$$\sum_{\substack{n_1, n_2, \ldots, n_k\\ n_i \geq 1\\n_1 + n_2 + \ldots + n_k = n}} \binom{n}{n_1, n_2, \ldots, n_k}n_1^{n_1-2}n_2^{n_2-2}\ldots n_k^{n_k-2},$$
+men det finns ett problem med hur vi räknat hittills -- vi har pratat om ``det första trädet'', ``det andra trädet'', och så vidare, men träden skall ju inte ha etiketter, bara de enskilda noderna. Så vi behöver dividera med antalet sätt att sätta etiketter på träden, vilket är $k!$, och då får vi exakt den formel uppgiften bad oss om.
+
+\section{Fråga 1, del b}
+
+Vi börjar med att bekräfta att randvillkoren gäller. Att $t_{n,n}$ är $1$ för alla $n$ är enkelt att se, eftersom det ju bara finns en enda skog med lika många träd som noder -- det är grafen utan kanter på $n$ noder. Att $t_{n,0} = 0$ följer av att varje nod måste tillhöra något träd, så vi kan inte ha noll träd. Att $t_{n,k} = 0$ om $n < k$ följer av att varje träd måste ha åtminstone en nod, så vi kan inte ha fler träd än noder.
+
+Låt oss nu bevisa rekursionen: Antag att vi vill konstruera en skog på $n$ noder och $k$ träd. Vi kan antingen göra detta genom att ta en skog på lika många träd men en nod färre, och sedan lägga till vår nya nod till ett av träden, eller ta en skog på en nod och ett träd färre, och lägga till vår nya nod som ett nytt träd på en enda nod.
+
+I det tidigare fallet kommer vår nya nod ha etikett $n$, alltså högre än varje nod som redan var i trädet -- så vi måste lägga till den som ett löv, eftersom etiketteringen annars inte vore ökande. Men vi kan lägga till den som barn till vilken som helst av de $n-1$ redan existerande noderna.
+
+I det senare fallet kan vi uppenbarligen bara göra på ett enda sätt -- och ett träd på en enda nod har trivialt en ökande etikettering.
+
+Alltså är det totala antalet sätt att skapa vår skog
+$$(n-1)t_{n-1,k} + t_{n-1,k-1}$$
+och vi har bevisat rekursionen.
+
+\section{Fråga 2}
+
+Denna tabell, med tolkningar av problemen i termer av lådor och bollar, återfinns i föreläsning 4.
+
+\section{Fråga 3}
+
+Vi använder vår vanliga metod för att lösa detta problemet: Låt 
+\begin{itemize}
+  \item $a_n$ vara antalet heltalslösningar på ekvationen $x_1 = n$,
+  \item $b_n$ vara antalet heltalslösningar på ekvationen $x_2 = n$, där vi kräver att $x_2$ är jämnt,
+  \item $c_n$ vara antalet heltalslösningar på ekvationen $x_3 = n$, med $2 \leq x \leq 50$,
+  \item och $d_n$ vara antalet heltalslösningar på ekvationen $x_4 = n$, där $x_4$ kan ha fyra olika färger om det är delbart med tre, och två olika färger annars.
+\end{itemize}
+
+Vi ser enkelt att dessa följder är
+$$a = (1,1,1,1,\ldots),\qquad b = (1,0,1,0,1,\ldots),$$
+$$c = (0,0,\underbrace{1,\ldots,1}_{\text{t.o.m. }50},0,0,\ldots), \quad\text{och}\quad d = (4,2,2,4,2,2,4,2,2,4,\ldots),$$
+och vi vill finna deras genererande funktioner.
+
+Formelsamlingen ger oss direkt att
+$$F_a(x) = \frac{1}{1-x}\quad\text{och}\quad F_b(x) = \frac{1}{1 - x^2}.$$
+
+För $c$ kan vi observera att 
+$$c = (\underbrace{1,1,1,\ldots,1}_{51\text{ stycken}},0,0,\ldots) - (1,1,0,0,\ldots)$$
+Formelsamlingen ger oss att genererande funktionen för första följden i högerled här är $\frac{1 - x^{50+1}}{1-x}$, och genererande funktionen för den andra är uppenbarligen $1 + x$, så
+$$F_c(x) = \frac{1 - x^{50+1}}{1-x} - 1 - x.$$
+
+Slutligen, för $d$, kan vi observera att
+$$d = 2(1,0,0,1,0,0,1,0,0,1,\ldots) + 2(1,1,1,1,\ldots)$$
+så vad vi behöver göra är att finna genererande funktionen för $e = (1,0,0,1,0,0,1,0,0,1,\ldots)$, indikatorfunktionen av tal delbara med tre. Vi kan räkna
+\begin{align*}
+  F_{e}(x) &= \sum_{k=0}^{\infty} \ind{3|k} x^k\\
+  &= \sum_{k=0}^{\infty} x^{3k}\\
+  &= \sum_{k=0}^{\infty} (x^3)^k = \frac{1}{1-x^3}
+\end{align*}
+där vi i sista ledet kände igen genererande funktionen för $(1,1,1,\ldots)$.
+
+Alltså är
+$$F_d(x) = 2\frac{1}{1 - x^3} + 2\frac{1}{1 - x}.$$
+
+Vi vet att antalet lösningar till ekvationen vi studerar ges av faltningen av dessa fyra följder, så
+\begin{align*}
+  F_l(x) &= F_{a * b * c * d}(x) = F_a(x)F_b(x)F_c(x)F_d(x)\\
+  &= \left(\frac{1}{1-x}\right)\left(\frac{1}{1-x^2}\right)\left(\frac{1 - x^{51}}{1-x} - 1 - x\right)\left(2\frac{1}{1 - x^3} + 2\frac{1}{1 - x}\right).
+\end{align*}
+
+\section{Fråga 4, del a}
+
+Vi vill se att dessa figurer är i bijektion med parentetiseringar av uttryck, vilka vi redan vet räknas av Catalantalen. Så vad vi gör är helt enkelt att ersätta varje start av en båge med en startparentes, och varje slut av en båge med en slutparentes. I motsatt riktning, för att få bågar av parentetiseringar, så ritar vi helt enkelt en båge som kopplar ihop varje matchande par av parenteser. Att detta ger en bijektion är tydligt om man studerar figuren.
+
+\section{Fråga 4, del b}
+
+Vi visar att dessa objekt uppfyller Segnerrekursionen. För att visa detta räcker det att visa hur varje objekt består av två mindre objekt av samma typ.
+
+Vad vi gör är helt enkelt att vi suddar bågen som kopplar ihop den första och sista punkten, och studerar vad som återstår. Vi hävdar att det alltid kommer finnas två sammanhängande komponenter, en som innehåller den första punkten, och en som innehåller den sista. För om dessa fortfarande hängde ihop hade vi antingen behövt ha en punkt med bågar som går ut åt bägge hållen, eller två korsande bågar.
+
+Dessa två komponenter kommer uppfylla alla våra krav, eftersom de var bitar i vårt originalobjekt. Alltså är dessa de två mindre objekten av vilka det större bestod, så vi har visat att de lyder rekursionen,\sidenote[][]{Här kan man fylla i mer detaljer, men det väsentliga är vad vi gjorde ovan.} och alltså räknas av Catalantalen.
+
+\section{Fråga 5}
+
+Detta är första delen av föreläsning åtta.
+
+\section{Fråga 6}
+
+Detta är andra delen av föreläsning åtta.
+
+\section{Fråga 7}
+
+Detta är Teorem 12 i föreläsning tio.
+
+\section{Fråga 8, del a}
+
+Varje mängd $A \in \binom{[n]}{3}$ av tre noder är en potentiell triangel -- låt $T_A$ vara händelsen att $A$ faktiskt är en triangel, alltså att alla tre kanterna existerar.
+
+Vi ser enkelt att $\Prob{T_A} = p^3$ för varje $A$, eftersom det är tre kanter som skall vara med, och var och en existerar oberoende med sannolikhet $p$.
+
+Nu kan vi, med hjälp av väntevärdets linjäritet och att väntevärden av indikatorfunktioner är sannolikheter, beräkna att
+\begin{align*}
+  \E{\#\text{trianglar}} &= \E{\sum_{A \in \binom{[n]}{3}} \ind{T_A}}\\
+  &= \sum_{A \in \binom{[n]}{3}} \Prob{T_A} = \binom{n}{3}p^3.
+\end{align*}
+
+\section{Fråga 8, del b}
+
+Låt $X$ vara antalet trianglar i vår slumpgraf -- i förra deluppgiften såg vi att $\E{X} = \binom{n}{3}p^3$.
+
+Om vi låter $\eta > 0$ vara litet kan vi, med hjälp av Markovs olikhet, räkna att
+\begin{align*}
+  \Prob{X > 0} &= \Prob{X > 1 - \eta}\\
+  &\leq \frac{\E{X}}{1 - \eta} < \E{X}\\
+  &= \binom{n}{3}p^3 = \frac{n(n-1)(n-2)}{6}p^3\\
+  &\leq n^3 p^3
+\end{align*}
+men vi vet att $p \leq n^{-(1+\epsilon)}$, så
+$$n^3p^3 = (n n^{-(1+\epsilon)})^3 = n^{-3\epsilon} \to 0\quad\text{när } n\to\infty$$
+vilket ger oss resultatet.
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}

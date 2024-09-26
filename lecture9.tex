@@ -1,0 +1,333 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Föreläsning 9: Diskret sannolikhetsteori, introduktion $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+\date{20 februari 2023}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+
+\begin{document}
+
+\definecolor{darkgreen}{rgb}{0.0627, 0.4588, 0.1451}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+Vi introducerar den diskreta sannolikhetsteorin, vilket är den som behandlar samma sorts objekt som kombinatoriken.
+\end{abstract}
+
+Varför har vi ett avsnitt om diskret sannolikhetsteori\sidenote[][]{I kursplanen kallat ``klassisk sannolikhetsteori'', vilket jag tolkar som en mer tvetydig term för ``diskret sannolikhetsteori''.} i en kurs om kombinatorik? 
+
+Diskret sannolikhetsteori och kombinatorik studerar samma klass av objekt -- diskreta strukturer -- så områdena överlappar. Ofta är vad man ser i början när man lär sig om sannolikhetsteori olika problem vars lösning kan sammanfattas som ``översätt till ett problem med att räkna någonting, lös det kombinatorikproblemet, och översätt tillbaka till en sannolikhet''. 
+
+Så det är en anledning till att prata om diskret sannolikhetsteori i denna kurs -- vi kan få många exempel, och de exemplen är ofta mer praktiskt tillämpbara än motsvarande kombinatorikproblem. Så när man börjat tröttna på överdrivet abstrakta exempel, eller klämkäcka exempel om glasskiosker, kan sannolikhetsteorin komma som en frisk fläkt.
+
+Men det är så klart inte så att fälten bara överlappar i ena riktningen -- det är precis lika sant att det finns många \emph{kombinatoriska} problem där den enklaste och vackraste lösningen använder sannolikhetsteori. Detta kallas för den \emph{probabilistiska metoden}\sidenote[][-0.8cm]{På engelska \emph{the probabilistic method} -- det finns en utsökt bok med just denna titel av Noga Alon och Joel Spencer som utforskar just detta ämne.
+
+Den lämpar sig definitivt inte som första bok om varken sannolikhetsteori eller kombinatorik, men har man läst någon kurs i vardera ämne och uppnått lite matematisk mognad är den nog ett bra men utmanande val av bok.} -- i dess vanligaste form visar vi att något kombinatoriskt objekt måste existera genom att vi visar att ett slumpmässigt valt objekt kan ha egenskapen. I många fall känner vi inte till något konkret exempel på ett sådant objekt -- bara att det måste existera.
+
+Men låt oss börja med att definiera vad vi egentligen menar med diskret sannolikhet.
+
+\section{Händelser och sannolikheter}
+
+\begin{definition}
+    Ett \emph{sannolikhetsrum} $(\Omega, \mu)$ består av en mängd $\Omega$ och en funktion $\mu: \Omega \to [0,1]$, sådana att
+    \begin{itemize}
+        \item $\Omega$ är icketom och ändlig eller uppräkneligt oändlig\sidenote[][-2.8cm]{Det vill säga, antingen är den ändlig, eller så kan vi numrera alla dess element $1, 2, 3, \ldots$. Detta är skillnaden mellan diskret och kontinuerlig sannolikhetsteori -- i kontinuerlig sannolikhetsteori tillåter vi oss överuppräkneliga mängder.
+        
+        I den kontinuerliga sannolikhetsteorin behöver man alltså kunna ``räkna'' saker som är fler än heltalen -- det vill säga ta integraler. Som ni kanske är medvetna är det inte helt okomplicerat att definiera vad det ens betyder att ta en integral i allmänhet. Alltså stannar vi i den trevliga diskreta världen, där vi har summor istället för integraler.},
+        \item det gäller att
+        $$\sum_{\omega \in \Omega} \mu(\omega) = 1.$$
+    \end{itemize}
+
+    Mängden $\Omega$ kallas för \emph{utfallsrum}, och elementen $\omega$ i $\Omega$ alltså för \emph{utfall}.\sidenote[][]{För den som är van med programmering, och vet hur slumpgeneratorer i datorn fungerar, bör man tänka på $\omega$ som \emph{seed} till slumpgeneratorn. Det är oftast inte ett intressant objekt i sig, men det bestämmer allt som slumpmässigt händer.} Funktionen $\mu$ kallar vi för vårt sannolikhetsmått.
+\end{definition}
+
+\begin{definition}
+    En \emph{händelse} $A$ är en delmängd till $\Omega$. Dess \emph{sannolikhet} ges av
+    $$\Prob{A} = \sum_{\omega \in A} \mu(\omega).$$
+
+    Notera här att vi definierar sannolikheter för \emph{händelser}, \textbf{inte för utfall}.\sidenote[][]{Detta beror på att vi i den kontinuerliga sannolikhetsteorin inte längre kan definiera $\mu$ som en funktion från utfall till reella tal, utan måste definiera den som ett genuint \emph{mått}, alltså en funktion från \emph{händelser} (=delmängder) till utfall. Precis som vi inte kan ta integralen av en funktion i en enda punkt, utan tar integraler över intervall.
+    
+    Ibland kan vi komma att vara slarviga och prata om sannolikheter för enskilda utfall, men det korrekta sättet att skriva är alltid sannolikheten för händelsen $\{\omega\}$, inte för utfallet $\omega$.}
+\end{definition}
+
+\begin{example}
+    Låt oss formulera de mest uppenbara exemplen av slump i vår nya terminologi.
+
+    Vi kan se ett tärningskast som att det har utfallsrum 
+    $$\Omega = \{1,2,3,4,5,6\},$$
+    och sannolikhetsmått $\mu$ som skickar varje utfall på $\frac{1}{6}$, alltså $\mu(\omega) = \frac{1}{6}$ för alla $\omega$.
+
+    Vad är sannolikheten att vårt tärningskast ger oss ett udda tal? Jo, vad vi frågar efter är sannolikheten för händelsen $U = \{1,3,5\}$, vilken vi beräknar som
+    $$\Prob{U} = \sum_{\omega \in U} \mu(\omega) = \frac{1}{6} + \frac{1}{6} + \frac{1}{6} = \frac{1}{2}.$$
+
+    Om vi singlar slant har vi istället utfallsrum $\Omega = \{\text{krona}, \text{klave}\}$, och vårt sannolikhetsmått $\mu$ är lika med $\frac{1}{2}$ för bägge utfallen.
+
+    Sannolikheten att vi får krona är alltså sannolikheten av \emph{händelsen} $\{\text{krona}\}$, och ges av
+    $$\sum_{\omega \in \{\text{krona}\}} \mu(\omega) = \mu(\text{krona}) = \frac{1}{2}.$$
+\end{example}
+
+Vi kan också använda våra kunskaper från tidigare föreläsningar för att lösa mer invecklade problem.
+
+\begin{example}
+    Antag att en grupp av $n$ stycken försupna studenter går på en efterfest. När festen till slut är över är alla överraskande nog kapabla att gå hem, men ingen är nykter nog att känna igen sin egen jacka, så de bara tar en slumpmässig jacka på vägen ut.
+
+    Vad är sannolikheten att \emph{ingen} student kommer hem med sin egen jacka?
+
+    Vi får fundera ett ögonblick på hur vi formaliserar det här problemet. Vi kan skriva tilldelningen av jackor till studenter som en permutation av längd $n$ ur alfabetet av jackor. 
+    
+    Om vi numrerar studenterna och jackorna, så att student ett kom dit i jacka ett, student två i jacka två, och så vidare, så kan vi betrakta utfallet som en permutation av $[n]$. Alltså kan vi sätta $\Omega = S_n$, alltså mängden av sådana permutationer.
+
+    Hur skall vi tänka för att lista ut vad sannolikheten för varje given permutation är? Vi kan resonera på ett komplicerat sätt med olika ordningar de kan gå ut i, och varje student tar varje kvarvarande jacka med samma sannolikhet, för att få svaret, eller så kan vi resonera på ett enkelt sätt.
+
+    Eftersom alla studenterna är för packade för att kunna se skillnad på jackor är problemet helt symmetriskt -- det finns ingen anledning till varför något specifikt utfall skulle vara mer sannolikt än något annat, eftersom studenterna inte kan se skillnad på utfallen oavsett.\sidenote[][]{Jackorna har temporärt gjorts osärskiljbara av övermåga drickande.} Alltså måste sannolikheten för varje utfall vara lika, och för att de skall summera till $1$ måste de alltså vara $\frac{1}{n!}$.
+
+    Som nästa steg i vår räkning får vi fundera på vad händelsen att ingen student går hem med sin egen jacka är. Det betyder, i vår formulering av utfallen som permutationer av $n$, att $\omega_i \neq i$ för alla $i$, alltså att $\omega$ är ett derangemang. Så vår händelse är mängden av derangemang, vilka vi ju redan räknat i en tidigare föreläsning att den har storlek
+    $$n!\sum_{k=0}^{n} \frac{(-1)^k}{k!}.$$
+
+    Så vi kan räkna ut att
+    \begin{align*}
+        \Prob{\text{Ingen har sin egen jacka}} &= \Prob{\left\{\omega \in S_n: \omega(i) \neq i\, \forall i\right\}}\\
+        &= \sum_{\substack{\omega \in S_n\\\omega(i) \neq i\, \forall i}} \mu(\omega)\\
+        &= \sum_{\substack{\omega \in S_n\\\omega(i) \neq i\, \forall i}} \frac{1}{n!}\\
+        &= \frac{1}{n!}\abs{\left\{\omega \in S_n: \omega(i) \neq i\, \forall i\right\}}\\
+        &= \frac{1}{n!}n!\sum_{k=0}^{n} \frac{(-1)^k}{k!} = \sum_{k=0}^{n} \frac{(-1)^k}{k!}
+    \end{align*}
+    vilket vi känner igen som de första $n$ termerna i Taylorutvecklingen av $e^{-1}$, så sannolikheten att ingen får med sig sin egen jacka är, för stora nog $n$, ungefär $36.8\%$.
+\end{example}
+
+\section{Betingad sannolikhet}
+
+Ett av de allra mest användbara verktygen för att resonera om sannolikheter är \emph{betingad sannolikhet}. Det låter oss utföra argument av stilen ``under antagandet att $A$ är sant så är sannolikheten för $B$ det här, så eftersom vi vet sannolikheten av $A$ är sannolikheten för $B$ detta''. Vi bryter alltså ned ett potentiellt svårt problem i enklare beståndsdelar.
+
+Rent konkret gör vi detta med följande definition:
+
+\begin{definition}
+    Givet två händelser $A$ och $B$, sådana att $\Prob{B} > 0$, definierar vi \emph{sannolikheten för $A$ givet $B$} som
+    $$\Prob{A \given B} = \frac{\Prob{A \cap B}}{\Prob{B}}.$$
+
+    Vi kan tolka detta som att vi ``zoomat in'' på bara $B$, och skapat oss ett nytt sannolikhetsmått $\mu_{|B}$, som ges av
+    $$\mu_{|B}: B \to [0,1]: x \mapsto \frac{\mu(x)}{\sum_{x\in B} \mu(x)}$$
+    så att
+    $$\Prob{A \given B} = \mu_{|B}(A \cap B).$$
+    
+    Så termen $\frac{1}{\Prob{B}} = \frac{1}{\sum_{x\in B} \mu(x)}$ är helt enkelt där för att få sannolikheterna i $\mu_{|B}$ att summera till ett.
+
+    Funderar man lite grann på saken bör det kännas rimligt att detta mäter sannolikheten för en händelse, givet att vi redan vet att händelsen $B$ inträffar -- vi räknar ju bara på utfallen där $B$ inträffat.
+\end{definition}
+
+\begin{definition}
+    Vi säger att två händelser $A$ och $B$ är \emph{oberoende} ifall
+    $$\Prob{A \cap B} = \Prob{A}\Prob{B}.$$
+
+    Namnet motiveras av att detta är samma sak som att $\Prob{A \given B} = \Prob{A}$ -- att få veta huruvida $B$ inträffade ger oss alltså ingen information alls om ifall $A$ inträffade, vår skattning av sannolikheten för det är helt oförändrad.
+\end{definition}
+
+\begin{lemma}[Lagen om total sannolikhet]\label{law_of_total_probability}
+    Det är alldeles uppenbart från vår definition att\sidenote[][]{Och som vår diskussion om hur vi använder betingad sannolikhet indikerade är detta den centrala egenskapen den har -- den låter oss dela upp det potentiellt svåra problemet att förstå $A \cap B$ i de enklare problemen att förstå $B$ och förstå $A$ givet $B$.}
+    $$\Prob{A \given B}\Prob{B} = \Prob{A \cap B}.$$
+
+    Detta generaliserar enkelt till att, om vi har en samling $B_1, B_2, \ldots B_k$ av disjunkta händelser sådana att
+    $$A \subseteq \coprod_{i=1}^k B_i,$$
+    alltså sådana att närhelst $A$ inträffar så inträffar exakt en av händelserna $B_i$, så är
+    $$\Prob{A} = \sum_{i=1}^{k} \Prob{A \given B_i}\Prob{B_i}.$$
+
+    I en enkel form får vi alltså för \emph{alla} par av händelser $A$ och $B$ att
+    $$\Prob{A} = \Prob{A \given B}\Prob{B} + \Prob{A \given B^c}\Prob{B^c}.$$
+\end{lemma}
+
+\begin{example}
+    Antag att vi har en urna som innehåller hundra glaskulor, som kan vara av glas eller sten, och kan vara antingen röda, gröna, eller blå. Vi drar upp en slumpmässig kula ur vår urna.
+
+    Om vi låter $A$ vara händelsen att kulan vi drar är av glas, och $B_r$, $B_g$, och $B_b$ vara händelserna att den är \emph{r}öd, \emph{g}rön, eller \emph{b}lå, så säger oss alltså lagen om total sannolikhet att
+    $$\Prob{A} = \Prob{A \given B_r}\Prob{B_r} + \Prob{A \given B_g}\Prob{B_g} + \Prob{A \given B_b}\Prob{B_b}.$$
+
+    Alltså: Om vi vet fördelningen mellan de olika färgerna i urnan (sannolikheterna för $B_r$, $B_g$, och $B_b$) och vi vet hur stor andel av varje given färg som är glaskulor, kan vi räkna ut hur stor andel av alla kulor som är av glas.\sidenote[][]{Som vi formulerat det här är det ju oerhört oöverraskande att vi kan göra det. Så är det -- det är inget märkligt som pågår här. Vad som är överraskande är om något hur ofta lagen om total sannolikhet är användbar, vilket vi kommer se i senare exempel.}
+\end{example}
+
+Låt oss, innan vi går vidare, ge några basala räkneregler för sannolikheter, som sammanfattning av vad vi sett hittills:
+
+\begin{lemma}
+    Det gäller för alla händelser $A$ och $B$ att
+    \begin{itemize}
+        \item per definition är $\Prob{A} = \sum_{\omega \in A} \mu(\omega)$,
+        \item så $\Prob{A^c} = 1 - \Prob{A}$,
+        \item och om $A$ och $B$ har tomt snitt, $A\cap B = \emptyset$, så är $\Prob{A \cup B} = \Prob{A} + \Prob{B}$,
+        \item och om de inte nödvändigtvis har tomt snitt har vi att
+        $$\Prob{A \cup B} = \Prob{A} + \Prob{B} - \Prob{A \cap B}.$$
+        \item $\Prob{A \cap B} = \Prob{A \given B}\Prob{B}$,
+        \item och per definition är $A$ och $B$ oberoende precis när $\Prob{A \cap B} = \Prob{A}\Prob{B}$.
+    \end{itemize}
+\end{lemma}
+
+\section{Unionsbegränsningar, med tillämpning på Ramseytalen}
+
+Vi hade kunnat ge hela detta avsnittet av kursen med enbart exempel om kulor av olika färger i olika urnor -- av någon anledning är det det första exemplet som dyker upp i de flesta probabilisters huvud. Låt oss undvika det, och istället ge ett lite mer intressant exempel.
+
+Vi börjar med att påminna oss om ett resultat vi bevisade tidigare, bara omklätt i probabilistisk skrud:
+
+\begin{lemma}[Inklusion-exklusion]
+    Det gäller, för varje samling av händelser $A_1, A_2, \ldots, A_n$, att
+    $$\Prob{\bigcup_{i=1}^n A_i} = \sum_{k=1}^{n} (-1)^{k+1}\sum_{\substack{I \subseteq [n]\\\abs{I} = k}} \Prob{\bigcap_{i\in I} A_i}.$$
+
+    Så specifikt har vi för varje par av händelser $A$ och $B$ att
+    $$\Prob{A \cup B} = \Prob{A} + \Prob{B} - \Prob{A \cap B}.$$
+
+    \begin{proof}
+        Vi utelämnar det, eftersom det är så snarlikt till det kombinatoriska fallet vi redan bevisat.
+    \end{proof}
+\end{lemma}
+
+Låt oss nu introducera ett oerhört potent lemma, som ändock är väldigt enkelt:
+
+\begin{lemma}[Unionsbegränsning]\label{union_bound}
+    Antag att vi har en samling av händelser $A_1, A_2, \ldots, A_k$. Vi är intresserade av sannolikheten att \emph{någon} av händelserna inträffar, alltså sannolikheten för deras \emph{union}. Det gäller att
+    $$\Prob{\bigcup_{i=1}^k A_i} \leq \sum_{i=1}^{k} \Prob{A_i}.$$
+
+    \begin{proof}
+        Inklusion-exklusion ger oss att
+        $$\Prob{\bigcup_{i=1}^k A_i} = \sum_{i=1}^{k} \Prob{A_i} - \left(\sum_{k=2}^{n} (-1)^{k}\sum_{\substack{I \subseteq [n]\\\abs{I} = k}} \Prob{\bigcap_{i\in I} A_i}\right)$$
+        och vi kommer ihåg att de extra termerna, som vi stoppat in i ett minustecken, är en korrektion för att vi råkat räkna punkterna i snitten mellan $A_i$ och $A_j$ för många gånger, så alltså måste vi göra höger led större om vi stryker den korrektionen. Alltså har vi vår sökta olikhet.
+    \end{proof}
+\end{lemma}
+
+Vår första tillämpning är på Ramseytalen, som vi redan sett innan som ett exempel på lådprincipen. Låt oss upprepa vår definition av dessa tal, i en mer rigorös terminologi som vi lärt oss sedan dess.
+
+\begin{definition}
+    Tänk att vi tar den fullständiga grafen $K_n$\sidenote[][]{Alltså grafen som har $n$ noder, och varje par av noder har en kant mellan dem.} och målar alla dess kanter antingen röda eller blå.
+
+    \emph{Ramseytalet} $R(k,\ell)$ är det minsta heltalet $n$ sådant att det måste finnas antingen en delmängd av $k$ noder i $K_n$ sådana att alla kanter mellan dem är röda, eller en delmängd av $\ell$ noder sådana att alla kanter mellan dem är blå. Vi kallar sådana delmängder för \emph{monokromatiska} delmängder.
+\end{definition}
+
+Vi konstaterade när vi först introducerade dessa tal att det är svårt att bevisa saker om dem bortom att de är ändliga, vilket är vad vi gjorde i en övning då. Nu har vi kommit långt nog att vi kan bevisa en faktisk olikhet för dem.
+
+\begin{proposition}\label{prop_ramsey_bound}
+    Om
+    $$\binom{n}{k}2^{1-\binom{k}{2}} < 1$$
+    så är $R(k,k) > n$. Således är
+    $$R(k,k) > \floor{2^{k/2}}$$
+    för alla $k\geq 3$.
+
+    \begin{proof}
+        Hur bevisar man att $R(k,k)$ måste vara större än ett visst givet $n$? Jo, Ramseytalet är ju per definition det minsta $n$ sådant att alla färgningar av kanterna till $K_n$ har en monokromatisk delgraf av storlek $k$. Alltså måste vi påvisa någon färgning av kanterna till $K_n$ som inte har en monokromatisk delmängd av någondera färgen.
+
+        Det här låter ju som något som kräver en väldigt smart konstruktion. Det stämmer -- i själva verket en så smart konstruktion att vi inte faktiskt förmår hitta den.
+
+        Det är här den probabilistiska metoden visar sin styrka -- vad vi gör istället för att konstruera ett exempel är att välja en \emph{slumpmässig} färgning, och visa att denna har sannolikhet större än noll att ha vår önskade egenskap.
+
+        Så, vi tänker oss att vi singlar en slant för varje kant i $K_n$, där myntets två sidor är ``röd'' och ``blå'' -- och våra slantsinglingar är oberoende av varandra. Vårt utfallsrum blir då lika med mängden av funktioner från $E(K_n)$, kanter i $K_n$, till mängden $\{\text{röd}, \text{blå}\}$, där varje blir lika sannolik. Vi kallar våra funktioner $\omega$, och låter alltså $\omega(i,j)$ vara färgen på kanten mellan $i$ och $j$.
+
+        Vad är sannolikheten att vår resulterande färgning har en monokrom delmängd av storlek $k$? Jo, om vi för varje delmängd $A$ till $[n]$ av storlek $k$ låter $R_A$ vara händelsen att $A$ är monokromt röd och $B_A$ vara händelsen att $A$ är monokromt blå,\sidenote[][]{Vill man vara rigorös låter vi alltså
+        $$R_A = \left\{\omega: \forall i, j \in A: \omega(i,j) = \text{röd}\right\}$$
+        och
+        $$B_A = \left\{\omega: \forall i, j \in A: \omega(i,j) = \text{blå}\right\}.$$} så blir händelsen att det finns \emph{någon} monokrom delgraf av den storleken precis\sidenote[][]{Den här notationen kan vara aningen förvirrande innan man tänkt efter -- vi tar en union av en samling mängder, där \emph{index} för unionen också är mängder. Men det vi tar unionen över är händelserna $R_A \cup B_A$, inte indexen $A$.}
+        $$\bigcup_{A \in \binom{[n]}{k}} R_A \cup B_A.$$
+
+        Hittills verkar det ju inte som att vi gjort några större framsteg -- vi har gått från att behöva göra en väldigt smart konstruktion till att behöva förstå en väldigt invecklad mängd av funktioner, som definierats som en union med index i en bunt mängder... Det är här Unionsbegränsningen visar sin kraft, och låter oss lösa ett mycket mycket enklare problem -- för om vi tillämpar den så får vi ju att
+        $$\Prob{\bigcup_{A \in \binom{[n]}{k}} R_A \cup B_A} \leq \sum_{A\in \binom{[n]}{k}} \Prob{R_A} + \Prob{B_A}.$$
+
+        Vi behöver alltså inte alls förstå oss på den komplicerade unionen, vi behöver bara förstå sannolikheterna för $R_A$ och $B_A$ -- och de är mycket enklare, eftersom de ju specificerar precis vilken den monokroma delmängden skall vara: Den skall vara $A$.
+
+        Så vad är sannolikheten att just $A$ innehåller enbart röda kanter, alltså sannolikheten för $R_A$? Jo, den innehåller totalt $\binom{k}{2}$ kanter, och för varje av dessa kanter måste myntet visa den röda sidan. Eftersom våra slantsinglingar är oberoende måste sannolikheten att alla blir röda vara produkten av sannolikheterna för varje mynt att bli rött. Alltså tar vi produkten av $\binom{k}{2}$ stycken $1/2$, och får att
+        $$\Prob{R_A} = 2^{-\binom{k}{2}}$$
+        för alla $A$. 
+        
+        Eftersom problemet är totalt symmetriskt mellan blå och röd gäller samma resultat för $B_A$, så vi får att
+        \begin{align*}
+            \sum_{A\in \binom{[n]}{k}} \Prob{R_A} + \Prob{B_A} &= \sum_{A\in \binom{[n]}{k}} 2^{1-\binom{k}{2}}\\
+            &= \binom{n}{k}2^{1-\binom{k}{2}}
+        \end{align*}
+        och här kan vi känna igen uttrycket vi antog i formuleringen av satsen var mindre än ett.
+
+        Alltså har vi bevisat att sannolikheten att vår slumpmässiga färgning av $K_n$ har en monokromatisk delmängd är mindre än ett -- så sannolikheten att den inte har det är större än noll. Men om sannolikheten för detta är större än noll måste det specifikt finnas ett utfall som inte har en monokromatisk delmängd -- så vi har hittat vårt exempel på en sådan färgning, helt utan att explicit konstruera det.
+    \end{proof}
+\end{proposition}
+
+\section{Övningar}
+
+\begin{xca}
+    Ge ett bevis för Lemma \ref{law_of_total_probability}.
+\end{xca}
+
+\begin{xca}
+    Visa att
+    $$\sum_{i=1}^{k} \Prob{A_i} = \sum_{\omega \in \Omega} \abs{\left\{i: \omega \in A_i\right\}}\,\mu(\omega).$$
+
+    Använd detta för att ge ett alternativt bevis för Lemma \ref{union_bound}.
+\end{xca}
+
+\begin{xca}
+    Vi har $n$ stycken fotbollslag som skall spela i en turnering mot varandra -- en väldigt utmattande sådan, eftersom varje lag spelar mot varje annat lag en gång, och oavgjorda matcher avgörs på straffar.
+
+    Vi kan tänka oss resultatet av denna turnering som ett sätt att ge varje kant i $K_n$ en \emph{riktning} -- kanten pekar från vinnaren till förloraren.
+
+    Vi säger att en turnering har \emph{egenskap $S_k$} om det, för varje samling av $k$ lag, finns ett annat lag som vann mot alla $k$ lagen.
+
+    Tänk er nu att dessa alla är amatörlag, som är precis lika usla på fotboll -- vinnaren i varje match är helt slumpmässig, och alla matcher är helt oberoende av varandra. Vi helt enkelt singlar en slant för att avgöra vem som vinner.
+
+    \textbf{Deluppgift a:} Givet en viss mängd $K$ bestående av $k$ stycken lag, låt $A_K$ vara händelsen att det inte finns något annat lag som slår alla lagen i $K$. Beräkna $\Prob{A_K}$.
+
+    \textbf{Deluppgift b:} Skriv upp händelsen att vår turnering \emph{inte} har egenskap $S_k$, i termer av händelserna $A_K$. Tillämpa en unionsbegränsning på sannolikheten för det här uttrycket, och använd vad ni fick i deluppgift a för att ge ett enkelt uttryck för en övre begränsning på denna sannolikhet.
+
+    \textbf{Deluppgift c:} Använd vad ni gjort i tidigare delar av denna uppgift för att ge ett resultat i stil med Proposition \ref{prop_ramsey_bound} om när det finns turneringar med egenskap $S_k$.
+\end{xca}
+
+\begin{xca}
+    En grupp av sju studenter i en kombinatorikkurs, Anton, Birgitta, Chiara, Damiano, Elisabet, och Francesco\sidenote[][]{Det var ovanligt många utbytesstudenter från Italien i just denna klassen.}, är vänner. Totalt är det $35$ studenter i klassen.
+
+    Deras föreläsare är betydligt elakare än mig, och väljer slumpmässigt ut tre studenter att gå fram och räkna en uppgift vid tavlan.
+
+    \begin{enumerate}
+        \item Vad är sannolikheten att Anton blir vald?
+        \item Vad är sannolikheten att Birgitta blir vald, och de andra två som blir valda inte är med i deras lilla grupp?
+        \item Vad är sannolikheten att exakt två personer ur vängruppen blir valda?
+        \item Givet att Francesco blivit vald, vad är sannolikheten att alla tre som valts ut är ur vängruppen?
+    \end{enumerate}
+\end{xca}
+
+\begin{xca}
+    Antag att du singlar en slant $n$ stycken gånger -- men till skillnad från våra vanliga idealiserade mynt är det här myntet lite imperfekt, så sannolikheten att det blir krona ges av $p$, för något $p \in [0,1]$.
+
+    Vad är sannolikheten att du får precis $k$ stycken krona?\sidenote[][]{Ledtråd: Betrakta ditt utfallsrum som samlingen av ord av längd $n$ ur alfabetet $\{\text{krona},\text{klave}\}$. Vad bör $\mu(\omega)$ vara för varje givet $\omega$?}
+\end{xca}
+
+\begin{xca}
+    Antag att vi har en samling av händelser $A_1, A_2, \ldots, A_n$, och låt, för varje $1 \leq k \leq n$,
+    $$\chi_k = \sum_{j=1}^{k} (-1)^{j+1}\sum_{\substack{I \subseteq [n]\\\abs{I} = j}} \Prob{\bigcap_{i\in I} A_i}.$$
+    
+    Alltså blir
+    $$\chi_1 = \sum_{i=1}^{n} \Prob{A_i}$$
+    och vad vår unionsbegränsning säger är att
+    $$\Prob{\bigcup_{i=1}^n A_i} \leq \chi_1$$
+    och inklusion-exklusion är påståendet att
+    $$\Prob{\bigcup_{i=1}^n A_i} = \chi_n.$$
+
+    Bevisa att vi i allmänhet har att
+    $$\Prob{\bigcup_{i=1}^n A_i} \leq \chi_k\quad\text{för udda } k\text{ och}\qquad\Prob{\bigcup_{i=1}^n A_i} \geq \chi_k\quad\text{för jämna }k.$$
+\end{xca}
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}

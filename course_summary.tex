@@ -1,0 +1,265 @@
+\documentclass[nobib]{tufte-handout}
+
+\title{Sammanfattning av hela kursen $\cdot$ 1MA020}
+
+\author[Vilhelm Agdur]{Vilhelm Agdur\thanks{\href{mailto:vilhelm.agdur@math.uu.se}{\nolinkurl{vilhelm.agdur@math.uu.se}}}}
+
+%\date{20 februari 2023}
+
+
+%\geometry{showframe} % display margins for debugging page layout
+
+\usepackage{graphicx} % allow embedded images
+  \setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+  \graphicspath{{graphics/}} % set of paths to search for images
+\usepackage{amsmath}  % extended mathematics
+\usepackage{booktabs} % book-quality tables
+\usepackage{units}    % non-stacked fractions and better unit spacing
+\usepackage{multicol} % multiple column layout facilities
+\usepackage{lipsum}   % filler text
+\usepackage{fancyvrb} % extended verbatim environments
+  \fvset{fontsize=\normalsize}% default font size for fancy-verbatim environments
+
+\usepackage{color,soul} % Highlights for text
+
+
+\include{mathcommands.extratex}
+
+%\let\emph\relax % there's no \RedeclareTextFontCommand
+%\DeclareTextFontCommand{\emph}{\bfseries}
+
+\definecolor{light-gray}{gray}{0.9}
+\definecolor{dark-red}{rgb}{0.8, 0, 0}
+\definecolor{dark-orange}{rgb}{0.98, 0.69, 0.03}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathmorphing}
+
+\makeatletter
+
+\newcommand{\defhighlighter}[3][]{%
+  \tikzset{every highlighter/.style={color=#2, fill opacity=#3, #1}}%
+}
+
+\defhighlighter{yellow}{.5}
+
+\newcommand{\highlight@DoHighlight}{
+  \fill [ decoration = {random steps, amplitude=1pt, segment length=15pt}
+        , outer sep = -15pt, inner sep = 0pt, decorate
+        , every highlighter, this highlighter ]
+        ($(begin highlight)+(0,8pt)$) rectangle ($(end highlight)+(0,-3pt)$) ;
+}
+
+\newcommand{\highlight@BeginHighlight}{
+  \coordinate (begin highlight) at (0,0) ;
+}
+
+\newcommand{\highlight@EndHighlight}{
+  \coordinate (end highlight) at (0,0) ;
+}
+
+\newdimen\highlight@previous
+\newdimen\highlight@current
+
+\DeclareRobustCommand*\highlight[1][]{%
+  \tikzset{this highlighter/.style={#1}}%
+  \SOUL@setup
+  %
+  \def\SOUL@preamble{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \highlight@BeginHighlight
+      \highlight@EndHighlight
+    \end{tikzpicture}%
+  }%
+  %
+  \def\SOUL@postamble{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \highlight@EndHighlight
+      \highlight@DoHighlight
+    \end{tikzpicture}%
+  }%
+  %
+  \def\SOUL@everyhyphen{%
+    \discretionary{%
+      \SOUL@setkern\SOUL@hyphkern
+      \SOUL@sethyphenchar
+      \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+    }{%
+    }{%
+      \SOUL@setkern\SOUL@charkern
+    }%
+  }%
+  %
+  \def\SOUL@everyexhyphen##1{%
+    \SOUL@setkern\SOUL@hyphkern
+    \hbox{##1}%
+    \discretionary{%
+      \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+    }{%
+    }{%
+      \SOUL@setkern\SOUL@charkern
+    }%
+  }%
+  %
+  \def\SOUL@everysyllable{%
+    \begin{tikzpicture}[overlay, remember picture]
+      \path let \p0 = (begin highlight), \p1 = (0,0) in \pgfextra
+        \global\highlight@previous=\y0
+        \global\highlight@current =\y1
+      \endpgfextra (0,0) ;
+      \ifdim\highlight@current < \highlight@previous
+        \highlight@DoHighlight
+        \highlight@BeginHighlight
+      \fi
+    \end{tikzpicture}%
+    \the\SOUL@syllable
+    \tikz[overlay, remember picture] \highlight@EndHighlight ;%
+  }%
+  \SOUL@
+}
+\makeatother
+
+%\renewcommand\emph[1]{{\color{dark-red} \highlight[light-gray]{#1}}}
+
+\renewcommand\emph[1]{\highlight[dark-orange]{#1}}
+
+\begin{document}
+
+\definecolor{darkgreen}{rgb}{0.0627, 0.4588, 0.1451}
+
+\maketitle% this prints the handout title, author, and date
+
+\begin{abstract}
+\noindent
+Detta dokument ger en sammanfattning av kursens innehåll, med \emph{nyckelord} markerade, och saker vi \emph{räknat} eller \emph{bevisat}.
+\end{abstract}
+
+Kursen är uppdelad i tre delar -- vi började med \emph{grundläggande kombinatorik} i de första fyra föreläsningarna, sedan introducerade vi \emph{genererande funktioner} i de kommande tre föreläsningarna. Sedan hade vi ett intermezzo om \emph{grafer} och \emph{träd} i en föreläsning, innan vi fortsatte till vår tredje del om \emph{diskret sannolikhetsteori och den probabilistiska metoden}.
+
+\section{Del ett: Grundläggande kombinatorik}
+
+I den första föreläsningen introducerade vi de allra mest grundläggande koncepten i kombinatoriken:
+\begin{enumerate}
+    \item \emph{Additionsprincipen} och \emph{multiplikationsprincipen} låter oss räkna olika mängder.
+    \item \emph{Ord} bildade ur olika alfabeten är det mest basala av alla kombinatoriska objekt.
+    \item Ett viktigt exempel på en slags ord är \emph{permutationer} -- vi definierar och \emph{räknar dessa}.
+    \item Om ord är det mest basala exemplet där ordning spelar roll är \emph{kombinationer} det mest grundläggande exemplet på när vi väljer saker utan ordning.
+    \item Vi definierar \emph{binomialkoefficienterna} och \emph{visar att} dessa räknar antalet kombinationer av en viss storlek.
+\end{enumerate}
+
+Precis i slutet av föreläsning ett börjar vi prata om \emph{kombinatoriska bevis}. I föreläsning två fortsätter vi på detta tema, och ger ett antal olika exempel.
+
+\begin{enumerate}
+    \item De flesta av våra \emph{kombinatoriska bevis involverar binomialkoefficienter}, alltså delmängder till en viss mängd i en kombinatorisk tolkning.
+    \item Vi \emph{bevisar} specifikt \emph{binomialsatsen} med ett kombinatoriskt bevis.
+    \item Sedan definierar vi \emph{omordningar} och använder dessa för att räkna \emph{multi-delmängder}\sidenote[][]{Just termen multi-delmängd introducerar vi tyvärr först i en senare föreläsning -- i efterhand borde termen ha dykt upp redan här. Den refererar till ett sätt att fördela ut $n$ osärskiljbara objekt till $k$ särskiljbara personer, om vi inte kräver att varje person måste få ett objekt.} med ett \emph{pinnar-och-stjärnor-argument}.
+    \item Vi ser vårt första exempel av att \emph{räkna lösningar till ekvationer} när vi tolkar en multi-delmängd som en lösning på en ekvation $x_1 + x_2 + \ldots + x_n = k$ -- detta kommer dyka upp igen senare i kursen, med fler begränsningar på vad variablerna kan ta för värden.
+    \item Vi definierar \emph{multinomialkoefficienterna}, och ser att dessa ger \emph{antalet omordningar av ett ord}.
+\end{enumerate}
+
+I den tredje föreläsningen i denna del av kursen introducerar vi några till enkla verktyg inom kombinatoriken.
+
+\begin{enumerate}
+    \item \emph{Lådprincipen}, i dess generaliserade form, låter oss visa en del överraskande resultat. Vi ger ett par enkla exempel, och ett lite mer sofistikerat.
+    \item \emph{Inklusion-exklusion} låter oss räkna många saker som annars vore väldigt svåra att räkna. För att kunna bevisa den introducerar vi \emph{indikatorfunktioner} och ger några räkneregler för dessa.
+    \item Vi \emph{använder} inklusion-exklusion för att räkna lösningar till ekvationer, nu med övre begränsningar på variablerna.
+    \item Vi definierar \emph{derangemang}, och använder inklusion-exklusion för att räkna dessa.
+\end{enumerate}
+
+Föreläsning fyra sammanfattar till slut vad vi gjort i denna del av kursen.
+
+\begin{enumerate}
+    \item Vi definierar \emph{Stirlings partitionstal}, och \emph{använder} inklusion-exklusion för att visa att antalet \emph{surjektioner} från en mängd till en annan räknas av en formel som involverar dessa.
+    \item Vi definierar \emph{mängdpartitioner} och \emph{visar} att dessa räknas av Stirlings partitionstal. Dessa ger oss ett till vanligt exempel på något vi kan ge \emph{kombinatoriska bevis} kring.
+    \item Vi skriver upp en stor tre-gånger-fyra tabell över många av de räkneproblem vi sysslat med hittills -- den \emph{tolvfaldiga vägen} -- som sammanfattar och systematiserar det hela i termer av \emph{särskiljbara och osärskiljbara objekt} och funktioner som kan vara \emph{generella, injektiva, eller surjektiva}.
+    \item Vi definierar \emph{Stirlings cykeltal}, och därmed också \emph{cykler i permutationer}. Vi \emph{visar} hur man kan \emph{omvandla} mellan en permutation i vanlig form och en i cykelform.
+\end{enumerate}
+
+\section{Del två: Genererande funktioner}
+
+I den här delen av kursen introducerar vi ett mer mekaniskt maskineri än tidigare -- innan var våra metoder ofta skräddarsydda för problemen, men genererande funktioner ger ofta ett generellt recept på en lösning.
+
+Första föreläsningen, föreläsning fem totalt, lade grunderna,
+\begin{enumerate}
+  \item gav definitionen av en (ordinär) \emph{genererande funktion},
+  \item räknade ut vad genererande funktionen var för några enkla exempel,
+  \item och \emph{använde} vår metod för att hitta genererande funktionen för \emph{Fibonaccitalen}.
+  \item Mer allmänt såg vi hur man kan \emph{manipulera} summor för att \emph{omvandla} \emph{rekursioner} för följder till ekvationer för deras genererande funktioner, och lösa dessa för att få ut den genererande funktionen.
+  \item Sedan definierade vi \emph{faltningen} av två följder, och \emph{bevisade} att den genererande funktionen för faltningen av två följder är produkten av deras genererande funktioner.
+  \item Vi \emph{använde} detta för att räkna lösningar till ekvationer med begränsningar på variablerna\sidenote[][-1cm]{I biten om multidelmängder kunde vi ha begränsningar av typen $x_4 \geq 72$, sedan när vi använde inklusion-exklusion kunde vi ha mer generella begränsningar av typen $3 \leq x_2 \leq 14$. När vi använder genererande funktioner kan vi ha mycket mer generella begränsningar, som till exempel på pariteten till $x_7$.} -- eller i alla fall hitta genererande funktionen för antalet lösningar, vilket oftast är gott nog.
+  \item Vi \emph{utnyttjade} också algebraiska manipulationer för genererande funktioner för att bevisa likheter mellan olika följder eller hitta genererande funktionen för en följd.\sidenote[][]{Detta dyker inte upp fullt så mycket i själva föreläsningen, men övning tre och fyra i föreläsningsanteckningarna är bra exempel på principen.}
+\end{enumerate}
+
+Andra föreläsningen om genererande funktioner, föreläsning sex totalt, fortsatte på samma tema, med mer räkning av lösningar till ekvationer. Sedan
+\begin{enumerate}
+  \item såg vi ett exempel på hur man kan \emph{finna en rekursion för ett kombinatoriskt problem},
+  \item definierade \emph{exponentiella genererande funktioner} och
+  \item fann några exempel på sådana för olika följder.
+  \item Sedan återvände vi till rekursionen vi funnit tidigare, och såg hur vi kan \emph{finna} en differentialekvation för den exponentiella genererande funktionen för en följd givet en rekursion. Att faktiskt lösa differentialekvationen är oftast möjligt, men inte riktigt en del av denna kursen, som ju inte handlar om analys.
+  \item Sedan definierade vi \emph{binomialfaltningen} mellan två följder, och \emph{visade} att den exponentiella genererande funktionen för binomialfaltningen mellan två följder är produkten av deras genererande funktioner.
+  \item Vi \emph{använde} sedan detta för att räkna antalet ord ur olika alfabeten, under olika begränsningar på antalet av en viss bokstav -- och såg att det var helt analogt med hur vi räknade lösningar på ekvationer.
+\end{enumerate}
+
+I tredje föreläsningen om genererande funktioner, föreläsning sju totalt, genomförde vi en mer omfattande räkning med genererande funktioner. Vi
+\begin{enumerate}
+  \item definierade \emph{gitterstigar}, \emph{uppåt-höger-stigar}, och \emph{Dyckstigar}.
+  \item Sedan \emph{fann} vi en rekursion, \emph{Segner-rekursionen}, för antalet Dyck-stigar,
+  \item och \emph{använde} denna för att hitta genererande funktionen för antalet Dyck-stigar.
+  \item Sedan definierade vi den \emph{stigande} och \emph{fallande fakulteten}, och använde dessa med Newtons binomialsats för att ge ett omständligt men helt mekaniskt bevis för vår \emph{explicita formel för Catalantalen}.
+  \item Efter det gav vi ett kombinatoriskt bevis för samma formel, som helt skippade att behöva hitta en rekursion och genererande funktion.
+  \item Vi gav några fler exempel på saker som räknas av Catalantalen, och \emph{visade} att de faktiskt räknas av dem genom att visa att de lyder Segner-rekursionen.\sidenote[][]{För att vara tydlig: Det intressanta här är inte nödvändigtvis de specifika exemplen, även om de är nyttiga, utan att allmänt förstå hur vi, genom att visa att ett objekt kan delas upp i två mindre objekt av samma typ, kan visa att någon följd lyder Segnerrekursionen och alltså räknas av Catalantalen.}
+\end{enumerate}
+
+\section{Intermezzo: Grafer och träd}
+
+I vår åttonde föreläsning hade vi ett litet intermezzo, där vi introducerade några koncept som behövs för framtiden. Specifikt
+\begin{enumerate}
+  \item definierade vi \emph{grafer}, som kan vara \emph{etiketterade} eller ej,
+  \item och \emph{träd} (alltså \emph{sammanhängande} grafer utan \emph{cykler}), som kan vara \emph{ordnade} eller oordnade, och ha eller inte ha en \emph{rot}.
+  \item Vi definierade vad vi menar med \emph{binära} träd, och \emph{visade} att de rotade ordnade binära oetiketterade träden med $n$ interna noder räknas av Catalantalen, eftersom dessa lyder Segner-rekursionen.
+  \item Sedan visade vi att de rotade ordnade oetiketterade träden på $n+1$ noder också räknas av Catalantalen, genom att ge en bijektion mellan dessa och parentetiseringar av uttryck.
+  \item Sedan introducerade vi \emph{Cayleys formel}. För att motivera den räknade vi etiketterade träd -- specifikt, givet ett oetiketterat träd, \emph{räknade} vi antalet sätt att sätta en etikett på det.
+  \item Vi gav sedan vårt första bevis av Cayleys formel med hjälp av \emph{Prüferkoder}. Vi såg hur man \emph{finner} Prüferkoden för ett träd, och gav en \emph{algoritm för att konstruera ett träd givet en Prüferkod}.
+  \item Efter det ville vi ge ett alternativt bevis av Cayleys formel, och för detta behövde vi introducera ett par nya koncept, nämligen vad det betyder för en graf att vara en \emph{delgraf} till en annan, vad en \emph{riktad} graf är för något, och vad en \emph{skog} är.
+  \item Sedan gav vi vårt alternativa bevis för Cayleys formel.
+\end{enumerate}
+
+\section{Del tre: Diskret sannolikhetsteori och den probabilistiska metoden}
+
+I denna del av kursen introducerade vi den andra större metoden inom kombinatoriken som vår kurs täcker -- den \emph{probabilistiska metoden}. För att kunna göra detta behövde vi så klart först introducera vårt verktyg, den \emph{diskreta sannolikhetsteorin}.
+
+Denna delen innehåller många olika exempel och satser -- ingen av dem är enskilt central, men att se den övergripande metoden, den röda tråden, är det. Alltså är inte själva satserna markerade, men \emph{metoderna} kan vara det.
+
+I den första föreläsningen, nummer nio totalt, så
+\begin{enumerate}
+  \item definierade vi \emph{sannolikhetsrum} bestående av \emph{utfallsrum} och \emph{sannolikhetsmått},
+  \item och kallade delmängder till utfallsrummet för \emph{händelser}, och definierade \emph{sannolikheten} för händelser.
+  \item Vi gav några enkla exempel på hur man kan beskriva problem i denna formalism -- och efter det var vi så vaga vi kunde komma undan med om hur exakt problemen formaliseras i den.\sidenote[][]{Detta var inte bara att jag var lat -- det är en universell standard bland sannolikhetsteoretiker att sopa det under mattan som irrelevanta detaljer. Man måste kunna definitionerna, men i nittionio fall av hundra behöver man inte tänka så noga på dem.}
+  \item Vi definierade den \emph{betingade sannolikheten}, vad det betyder att händelser är \emph{oberoende}, och formulerade \emph{lagen om total sannolikhet}.
+  \item Sedan formulerade vi inklusion-exklusion i dess sannolikhetsteoretiska version, och använde denna för att bevisa \emph{unionsbegränsningen}.
+  \item Vi använde unionsbegränsningen för att bevisa en undre begränsning för Ramseytalen. Vi gjorde detta genom att välja en \emph{slumpmässig färgning} och \emph{räkna} på sannolikheten för att delgrafer skulle bli monokromatiska.
+\end{enumerate}
+
+I föreläsning två i denna del, nummer tio totalt,
+\begin{enumerate}
+  \item definierade vi \emph{slumpvariabler}, och specialfallet med \emph{likformiga slumpvariabler}.
+  \item Sedan definierade vi \emph{väntevärdet} av en slumpvariabel, och \emph{bevisade} ett lemma som gav en \emph{alternativ formel} för väntevärdet.
+  \item Vi \emph{bevisade} sedan \emph{väntevärdets linjäritet}, och fann en koppling mellan väntevärdet av \emph{indikatorvariabeln för en händelse} och sannolikheten för denna händelse.
+  \item Vi använde sedan detta för att bevisa Sperners lemma och \emph{Caro-Weis sats}. I bägge fallen involverade idén att välja en slumpmässig permutation, och använda den för att skapa ett nyttigt objekt -- en slumpmässig kedja i Sperners lemma, och en slumpmässig oberoende mängd för Caro-Wei -- som vi sedan kunde studera för att få fram resultatet.
+  \item Vi \emph{bevisade} sedan \emph{Markovs olikhet}, och definierade \emph{Erd\H{o}s-Renyi-grafer},
+  \item och bevisade ett villkor för när Erd\H{o}s-Renyi-grafen inte har några isolerade noder. \emph{Idén} var helt enkelt att räkna ut väntevärdet av antalet isolerade noder, med hjälp av väntevärdets linjäritet, och sedan använda Markovs olikhet för att se att det faktum att detta väntevärde gick mot noll gav att sannolikheten att det existerade isolerade noder också gick mot noll.
+\end{enumerate}
+
+Föreläsning tre i denna del, den elfte och sista i kursen, introducerade nästan inga nya koncept, utan gav bara ytterligare exempel på hur man kan använda den probabilistiska metoden.
+
+\begin{enumerate}
+  \item Vi började med att bevisa en nedre begränsning för \texttt{min-bisection}. Vi gjorde detta genom att utnyttja Diracs sats för att hitta en \emph{Hamiltoncykel} i komplementgrafen, tog varannan kant i den cykeln för att få en matchning disjunkt från kanterna i grafen, och valde sedan hälften av noderna som vårt $A$ genom att ta en ur varje par.
+  \item Sedan visade vi ett resultat av Ajtai-Chvatal-Newborn-Szemerédi-Leighton om det minimala antalet korsningar mellan kanter i en ritning av en graf. Idén var att ta en känd olikhet för detta, och tillämpa den på en slumpmässig delgraf där vi behöll varje nod med en viss sannolikhet. Eftersom detta skalade antalet noder, antalet kanter, och antalet korsningar på olika sätt\sidenote[][]{Snarlikt till hur man, om man halverar sidlängden på en kub, minskar dess yta till en fjärdedel och dess volym till en åttondel.} kunde vi få ut en bättre olikhet av detta.
+  \item Till slut bevisade vi ett resultat om längden av den längsta ökande delföljden till en slumpmässig permutation, där vi dels använde det \emph{betingade väntevärdet} för att ge en övre begränsning, och dels använde vårt argument för Erd\H{o}s-Székeres sats för att ge en undre begränsning.
+\end{enumerate}
+
+%\bibliography{references}
+%\bibliographystyle{plainnat}
+
+\end{document}
